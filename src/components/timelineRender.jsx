@@ -1,14 +1,36 @@
 import styled from "styled-components";
+import ReactModal from "react-modal";
+import React, { useEffect, useState } from "react";
+import getTitleFromUrl from "../services/request.metadata.js";
+import apiAuth from "../services/apiAuth.js";
 
 export default function EachPost ({prop}){
-    // implementar funcionaidade de curtida
+  const user = localStorage.getItem("user")
+  const myObj = JSON.parse(user)
+  const [edit, setEdit] = useState(0)
+  
+
     function curtirPost(e){
         e.preventDefault();
       }
-
+    
+      
+      useEffect(()=>{
+        //const metadata = getTitleFromUrl(prop.postUrl)
+        //console.log(metadata)
+        if(myObj.idUser === prop.idUser){
+          setEdit(1)
+        }
+      },[])
+     
 
     return(
-        <TimelineList>
+     
+        <TimelineList edit={edit}>
+        <div className="addEdit">
+        <ion-icon name="trash-outline" ></ion-icon>
+        <ion-icon name="pencil-outline"></ion-icon>
+        </div>
         <div className="sideBarPost">
         <Image data = {prop.pictureUrl}></Image>
         <ion-icon name="heart-outline" onClick={curtirPost}></ion-icon>
@@ -33,19 +55,40 @@ const TimelineList = styled.li`
     background-color: #171717;
     display: flex;
     border-radius: 10px;
+    position: relative;
     @media (max-width: 661px) {
         border-radius: 0px;
       }
+
+
+    .addEdit{
+      display: ${(props) => props.edit ? "inirit":"none"};
+      :first-child{
+      color: white;
+      position: absolute;
+      right: 25px;
+      top: 10px;
+      font-size: 20px;
+      }
+      :last-child{
+      color: white;
+      position: absolute;
+      right: 50px;
+      top: 10px;
+      font-size: 20px;
+      }
+    }
+
     .urlPost{
       margin-top: 10px;
-      width: calc(100% - 18%);
+      width: calc(100% - 18px );
       height: 115px;
       border-radius: 10px;
       border: 1px solid  #4D4D4D;
       padding: 5px;
       box-sizing: border-box;
       word-wrap: break-word;
-      
+      cursor: pointer;
     }
 
     .contentPost{

@@ -4,8 +4,7 @@ import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import apiAuth from "../services/apiAuth.js";
 import EachPost from "../components/timelineRender.jsx";
-import urlMetadata from "url-metadata";
-import { urlMeta } from "../services/request.metadata.js";
+
 
 export default function TimelinePage() {
   const navigate = useNavigate();
@@ -49,8 +48,7 @@ export default function TimelinePage() {
       postText
     };
 
-    /*const metadata = urlMeta(postUrl)
-    console.log(metadata)*/
+    
     
     apiAuth.postPublish(myObj.token, objPublication)
     .then(res =>{
@@ -59,7 +57,7 @@ export default function TimelinePage() {
       setPosttext("")
       setDisable(false)
     })
-    .catch(err => alert(err.message))
+    .catch(err => alert("Houve um erro ao publicar seu link"))
   }
 
   
@@ -67,15 +65,17 @@ export default function TimelinePage() {
   return (
 
   <Container>
-    <Logo pic = {myObj.pictureUrl}>
+     
+    <Logo pic={myObj.pictureUrl}>
       <h1>linkr</h1>
       <div className="imgPerfil"></div>
     </Logo>
+    
     <Timeline>
       <HeaderTime>
         <h1>timeline</h1>
       </HeaderTime>
-
+      
       <ShareBar>
         <p>What are you going to share today?</p>
         <form onSubmit={publish}>
@@ -97,7 +97,7 @@ export default function TimelinePage() {
           />
           
           <button type="submit" disabled={disable}>
-           Publish
+           {disable ? "Publishing..." : "Publish"}
           </button>
         </form>
       </ShareBar>
@@ -107,7 +107,7 @@ export default function TimelinePage() {
       </Loading>
       <PostsRender>
         {timeline.map((post)=>(
-          <EachPost key={post._id} prop={post}/>
+          <EachPost key={post.id} prop={post}/>
           
         ))}
       </PostsRender>
@@ -292,7 +292,7 @@ const Logo = styled.section`
 
 const Container = styled.div`
   display: flex;
-  
+  width: 100%;
   flex-direction: column;
   justify-content: baseline;
   align-items: center;

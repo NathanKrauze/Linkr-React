@@ -18,5 +18,11 @@ function postPublish (token, body){
     return promisse
 }
 
-const apiAuth = {getTimeline, postPublish};
+function deletePost (token, params){
+    
+    const promisse = axios.delete(`${process.env.REACT_APP_API_URL}/delete/${params}`, getConfig(token))
+    return promisse
+}
+
+const apiAuth = {getTimeline, postPublish, deletePost};
 export default apiAuth

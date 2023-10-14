@@ -1,25 +1,15 @@
-import urlMetadata from "url-metadata";
 
+import axios from 'axios';
+import * as cheerio from 'cheerio';
 
-export async function urlMeta (urlPost) {
-    const options = {
-        requestHeaders: {
-          'User-Agent': 'url-metadata/3.0 (npm module)',
-          'From': 'example@example.com',
-        },
-        cache: 'no-cache',
-        mode: 'no-cors',
-        timeout: 10000,
-        descriptionLength: 750,
-        ensureSecureImageRequest: true,
-        includeResponseBody: false
-      };
-
+export default async function getTitleFromUrl(url) {
     try {
-      const metadata = await urlMetadata(urlPost,options);
-      console.log('fetched metadata:', metadata)
-      
-    } catch(err) {
-      console.log('fetch error:', err);
+        const response = await axios.get(url);
+        const $ = cheerio.load(response.data);
+        const pageTitle = $('title').text();
+        return pageTitle;
+    } catch (error) {
+        console.error('Erro ao buscar a página:', error);
+        return false;
     }
-  };
+}
