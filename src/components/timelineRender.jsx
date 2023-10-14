@@ -18,7 +18,7 @@ export default function EachPost ({prop}){
         <div className="contentPost">
         <p>{prop.username}</p>
         <p className="postText">{prop.postText}</p>
-        <div className="urlPost">{prop.postUrl}</div>
+        <div className="urlPost" onClick={()=> window.open(prop.postUrl, '_blank')}>{prop.postUrl}</div>
         </div>
         
         </TimelineList>
@@ -32,15 +32,20 @@ const TimelineList = styled.li`
     height: 232px;
     background-color: #171717;
     display: flex;
-
+    border-radius: 10px;
+    @media (max-width: 661px) {
+        border-radius: 0px;
+      }
     .urlPost{
       margin-top: 10px;
-      width: 288px;
+      width: calc(100% - 18%);
       height: 115px;
       border-radius: 10px;
       border: 1px solid  #4D4D4D;
       padding: 5px;
       box-sizing: border-box;
+      word-wrap: break-word;
+      
     }
 
     .contentPost{
@@ -55,6 +60,7 @@ const TimelineList = styled.li`
         font-size: 15px;
         color:#B7B7B7;
         padding: 2px;
+        word-wrap: break-word;
       }
 
       p{

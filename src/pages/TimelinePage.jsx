@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import apiAuth from "../services/apiAuth.js";
 import EachPost from "../components/timelineRender.jsx";
+import urlMetadata from "url-metadata";
+import { urlMeta } from "../services/request.metadata.js";
 
 export default function TimelinePage() {
   const navigate = useNavigate();
@@ -12,13 +14,25 @@ export default function TimelinePage() {
   const user = localStorage.getItem("user")
   const myObj = JSON.parse(user)
   const [timeline, setTimeline] = useState([])
-  
+  const [disable, setDisable] = useState(false);
+
   function getTimeline(){
+    setDisable(true)
     apiAuth.getTimeline(myObj.token)
     .then(res => {
       setTimeline(res.data)
+      setDisable(false)
+      if(res.data.length === 0 ){
+        alert("There are no posts yet")
+      }
     })
-    .catch(err => alert(err.message))
+    .catch(err => {
+      if(err.code === "ERR_NETWORK"){
+        alert("An error occured while trying to fetch the posts, please refresh the page")
+      } else{
+        navigate("/")
+      } 
+    })
 
   }
 
@@ -29,17 +43,21 @@ export default function TimelinePage() {
 
   function publish(e){
     e.preventDefault();
-
+    setDisable(true)
     const objPublication= {
       postUrl,
       postText
     };
+
+    /*const metadata = urlMeta(postUrl)
+    console.log(metadata)*/
     
     apiAuth.postPublish(myObj.token, objPublication)
     .then(res =>{
       getTimeline()
       setPostUrl("")
       setPosttext("")
+      setDisable(false)
     })
     .catch(err => alert(err.message))
   }
@@ -78,12 +96,15 @@ export default function TimelinePage() {
           onChange={(e) => setPosttext(e.target.value)}
           />
           
-          <button type="submit">
+          <button type="submit" disabled={disable}>
            Publish
           </button>
         </form>
       </ShareBar>
-
+      <Loading aux = {disable}>
+        <div className="spinner is-animating"></div>
+        <p>Loading...</p>
+      </Loading>
       <PostsRender>
         {timeline.map((post)=>(
           <EachPost key={post._id} prop={post}/>
@@ -95,17 +116,41 @@ export default function TimelinePage() {
 </Container>
 );
 }
+const Loading = styled.div`
+display: ${(props) => !props.aux ? "none" : "flex"};
+margin-top: 10px;
+flex-direction: column;
+align-items: center;
+  .spinner{
+  border: 5px solid #DCDCDC;
+	border-left-color: #1877F2;
+	border-radius: 100%;
+	height: 50px;
+	width: 50px;
+    @keyframes loading {
+      0% {
+        transform: rotate(0);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+  }
+  .spinner.is-animating {
+	  animation: loading 2s linear infinite;
+  }
+  p{
+    font-family: lato;
+    color: white;
+    margin-top: 5px;
+  }
+
+`;
+
 
 const PostsRender = styled.ul`
   width: 100%;
   margin-top: 10px;
-  
-  li{
-   
-    }
-
-    
-
 `;
 
 const ShareBar = styled.ul`
@@ -114,7 +159,10 @@ const ShareBar = styled.ul`
   background-color: white;
   position: relative;
   font-family:Lato;
-  
+  border-radius: 10px;
+  @media (max-width: 661px) {
+    border-radius: 0;
+  }
  form{
   font-family: Lato;
   display: flex;
@@ -186,7 +234,14 @@ const ShareBar = styled.ul`
 
 const Timeline = styled.div`
   display: flex;
-  flex-direction: column;  
+  flex-direction: column;
+  margin-top: 49px ;
+  width: 100%;
+
+  @media (min-width: 661px) {
+    width: 661px;
+  }
+
 `;
 
 const HeaderTime = styled.div`
@@ -204,8 +259,10 @@ const Logo = styled.section`
   justify-content: left;
   background-color: #151515;
   height: 49px;
-  position: relative;
-
+  position: fixed;
+  width: 100%;
+  z-index: 3;
+  
   .imgPerfil{
         position: absolute;
         right: 10px;
@@ -238,6 +295,7 @@ const Container = styled.div`
   
   flex-direction: column;
   justify-content: baseline;
+  align-items: center;
   background-color: #333333;
   height: 100%;
 

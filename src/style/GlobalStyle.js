@@ -6,6 +6,9 @@ const GlobalStyle = createGlobalStyle`
         font-style: normal;
         font-weight: 700;
     }
+    body{
+        background-color: #333333;
+    }
     button {
         outline: none;
         border: none;
