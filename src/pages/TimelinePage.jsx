@@ -22,6 +22,7 @@ export default function TimelinePage() {
     apiAuth
       .getTimeline(myObj.token)
       .then((res) => {
+        console.log(res.data.length)
         setTimeline(res.data);
         setDisable(false);
       })
@@ -106,18 +107,17 @@ export default function TimelinePage() {
             <p>Loading...</p>
           </Loading>
 
-          {timeline ? (
+          {timeline.length>0 ? (
             <PostsRender>
               {timeline.map((post) => (
                 <EachPost key={post.id} prop={post} />
               ))}
-            </PostsRender>
-          ) : (
+            </PostsRender>) 
+            : timeline.length === 0 ? (
             <p className="anyOnePost" data-test="message">
-              
               There are no posts yet
             </p>
-          )}
+          ): <></>}
         </Timeline>
 
         <Trending posts={timeline} />
