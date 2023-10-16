@@ -12,8 +12,8 @@ export default function EachPost({ prop }) {
   const user = localStorage.getItem("user")
   const myObj = JSON.parse(user)
   const [edit, setEdit] = useState(0);
-  const [liked, setLiked] = useState(prop.usersLikes.includes(myObj.idUser));
-  const [likes, setLikes] = useState(Number.parseInt(prop.likes))
+  //const [liked, setLiked] = useState(prop.usersLikes.includes(myObj.idUser));
+  //const [likes, setLikes] = useState(Number.parseInt(prop.likes))
   const {setStatusModal, setIdPost, statusModal} = useContext(PostContext)
   const [contentStatus, setContentStatus] = useState(true)
   const [postContent, setPostContent] = useState(prop.postText)
@@ -22,7 +22,7 @@ export default function EachPost({ prop }) {
   const [count, setCount] = useState(0);
   
   function curtirPost(e) {
-    const newLiked = !liked
+    /*const newLiked = !liked
     setLiked(!liked)
     apiAuth.likePost(prop.id, myObj.token, newLiked)
       .then(()=>{
@@ -34,7 +34,7 @@ export default function EachPost({ prop }) {
       })
       .catch(err=>{
         alert(err.response.data)
-      })
+      })*/
   }
 
 
