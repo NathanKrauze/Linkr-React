@@ -141,8 +141,8 @@ export default function EachPost({ prop }) {
         </div>
         <div className="sideBarPost">
           <Image data={prop.pictureUrl}></Image>
-          <ion-icon name="heart-outline" onClick={curtirPost}></ion-icon>
-          <p>13 likes</p>
+          <ion-icon name="heart-outline"  data-test="like-btn" onClick={curtirPost}></ion-icon>
+          <p data-test="counter">13 likes</p>
         </div>
 
         <div className="contentPost">
