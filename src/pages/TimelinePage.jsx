@@ -114,7 +114,7 @@ export default function TimelinePage() {
             </PostsRender>
           ) : (
             <p className="anyOnePost" data-test="message">
-              {" "}
+              
               There are no posts yet
             </p>
           )}

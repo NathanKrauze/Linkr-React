@@ -52,8 +52,8 @@ export default function HashtagPage() {
       </Logo>
 
       <Timeline>
-        <HeaderTime>
-          <h1># {hashtag}</h1>
+        <HeaderTime >
+          <h1 data-test="hashtag-title" ># {hashtag}</h1>
         </HeaderTime>
 
         <Loading aux={disable}>
@@ -61,7 +61,7 @@ export default function HashtagPage() {
           <p>Loading...</p>
         </Loading>
         {postsHashtag ? (
-          <PostsRender>
+          <PostsRender >
             {postsHashtag.map((post) => (
               <EachPost key={post.id} prop={post} />
             ))}
