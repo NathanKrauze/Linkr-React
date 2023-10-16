@@ -1,51 +1,122 @@
 import styled from "styled-components";
 import ReactModal from "react-modal";
-import React, { useEffect, useState } from "react";
-import getTitleFromUrl from "../services/request.metadata.js";
+import React, { useContext, useEffect, useState, useRef } from "react";
+import metadata from 'url-metadata';
 import apiAuth from "../services/apiAuth.js";
+import { PostContext } from "../contexts/postContext.jsx";
+import TimelinePage from "../pages/TimelinePage.jsx";
+
+
 
 export default function EachPost ({prop}){
   const user = localStorage.getItem("user")
   const myObj = JSON.parse(user)
   const [edit, setEdit] = useState(0)
-  
+  const {setStatusModal, setIdPost, statusModal} = useContext(PostContext)
+  const [contentStatus, setContentStatus] = useState(true)
+  const [postContent, setPostContent] = useState(prop.postText)
+  const inputRef = useRef(null);
+  const [count, setCount] = useState(0);
+
+  ReactModal.setAppElement('#root')
 
     function curtirPost(e){
         e.preventDefault();
       }
-    
-      
+
       useEffect(()=>{
-        //const metadata = getTitleFromUrl(prop.postUrl)
-        //console.log(metadata)
+        
         if(myObj.idUser === prop.idUser){
           setEdit(1)
-        }
+        }   
+        //buscarMetadados();
       },[])
-     
 
+      const buscarMetadados = async () => {
+        try {
+          const data = await metadata(prop.postUrl);
+          console.log(data)
+        } catch (error) {
+          console.error('Erro ao buscar metadados', error);
+        }
+      };
+
+    function openDialog(e){
+      e.preventDefault();
+      setStatusModal(true)
+      setIdPost(prop.id)
+      console.log("open")
+    }
+
+    function editText(e){
+      e.preventDefault()
+      if(count === 0){
+        setContentStatus(false)
+        setCount(1);
+      } else{
+        setContentStatus(true);
+        setPostContent(prop.postText)
+        setCount(0);
+      }
+      setTimeout(() => {
+        inputRef.current.focus();
+      }, 0);
+    }
+
+    function handlePress(e){
+      if (e.key === 'Escape') {
+        setPostContent(prop.postText);
+        setContentStatus(true)
+      }
+      if (e.key === 'Enter') {
+        const body ={
+          postText: postContent
+        }
+        setContentStatus(true)
+        apiAuth.updatePost(myObj.token, prop.id, body)
+        .then(res =>{})
+        .catch(err=>{
+          alert(err.response.data)
+          setContentStatus(false)
+        })
+      }
+    }
+    
     return(
-     
-        <TimelineList edit={edit}>
-        <div className="addEdit">
-        <ion-icon name="trash-outline" ></ion-icon>
-        <ion-icon name="pencil-outline"></ion-icon>
-        </div>
-        <div className="sideBarPost">
-        <Image data = {prop.pictureUrl}></Image>
-        <ion-icon name="heart-outline" onClick={curtirPost}></ion-icon>
-        <p>13 likes</p>
-        </div>
+      <>
+        <TimelineList data-test="post"
+        edit={edit} disText={contentStatus}>
 
-        <div className="contentPost">
-        <p>{prop.username}</p>
-        <p className="postText">{prop.postText}</p>
-        <div className="urlPost" onClick={()=> window.open(prop.postUrl, '_blank')}>{prop.postUrl}</div>
-        </div>
-        
+          <div className="addEdit">
+            <ion-icon name="trash-outline" data-test="delete-btn" onClick={openDialog}></ion-icon>
+            <ion-icon name="pencil-outline"onClick={editText} data-test="edit-btn"></ion-icon>
+          </div>
+          <div className="sideBarPost">
+            <Image data = {prop.pictureUrl}></Image>
+            <ion-icon name="heart-outline" onClick={curtirPost}></ion-icon>
+            <p>13 likes</p>
+          </div>
+
+          <div className="contentPost">
+            <p data-test="username">{prop.username}</p>
+            
+            <input data-test="description edit-input"
+            className="postText" 
+            disabled={contentStatus}
+            ref={inputRef}
+            type = "text"
+            id = "text"
+            value = {postContent}
+            onChange={(e)=> setPostContent(e.target.value)}
+            onKeyUp={handlePress}
+            />
+              <div data-test="link" className="urlPost" onClick={()=> window.open(prop.postUrl, '_blank')}>{prop.postUrl}</div>
+          </div>
         </TimelineList>
+        </>
     )
 }
+
 
 const TimelineList = styled.li`
     margin-top: 20px;
@@ -62,6 +133,7 @@ const TimelineList = styled.li`
 
 
     .addEdit{
+      cursor: pointer;
       display: ${(props) => props.edit ? "inirit":"none"};
       :first-child{
       color: white;
@@ -99,11 +171,14 @@ const TimelineList = styled.li`
       width: 100%;
 
       .postText{
+        width: auto;
         font-family: lato;
         font-size: 15px;
         color:#B7B7B7;
         padding: 2px;
         word-wrap: break-word;
+        background-color:${props => props.disText ? "#171717" : "#fff"};
+        border: none;
       }
 
       p{
