@@ -19,8 +19,6 @@ export default function AuthProvider({ children }) {
   useEffect(() => {
     if (!token) {
       navigate("/");
-    } else {
-      navigate("/timeline");
     }
   }, []);
 
