@@ -1,19 +1,25 @@
 import { Route, Routes } from "react-router-dom";
 import styled from "styled-components";
-import LoginPage from "./pages/LoginPage";
-import SignupPage from "./pages/SignupPage";
-import TimelinePage from "./pages/TimelinePage";
-import AuthProvider from "./contexts/authContext";
+import LoginPage from "./pages/LoginPage.jsx";
+import SignupPage from "./pages/SignupPage.jsx";
+import TimelinePage from "./pages/TimelinePage.jsx";
+import AuthProvider from "./contexts/authContext.jsx";
+import { PostContext } from "./contexts/postContext.jsx";
+import { useState } from "react";
 
 export default function App() {
+  const [statusModal, setStatusModal] = useState(false);
+  const [ idPost, setIdPost] = useState(0);
   return (
     <PagesContainer>
       <AuthProvider>
+        <PostContext.Provider value={{statusModal, setStatusModal, idPost, setIdPost}}>
         <Routes>
           <Route path="/" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/timeline" element={<TimelinePage />} />
         </Routes>
+        </PostContext.Provider>
       </AuthProvider>
     </PagesContainer>
   );

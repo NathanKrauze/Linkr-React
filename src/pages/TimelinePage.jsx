@@ -1,9 +1,12 @@
 
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import apiAuth from "../services/apiAuth.js";
 import EachPost from "../components/timelineRender.jsx";
+import MeuComponente from "../components/modalComponent.jsx"
+import { PostContext } from "../contexts/postContext.jsx";
+
 
 
 export default function TimelinePage() {
@@ -14,6 +17,7 @@ export default function TimelinePage() {
   const myObj = JSON.parse(user)
   const [timeline, setTimeline] = useState([])
   const [disable, setDisable] = useState(false);
+  const {statusModal} = useContext(PostContext)
 
   function getTimeline(){
     setDisable(true)
@@ -21,9 +25,7 @@ export default function TimelinePage() {
     .then(res => {
       setTimeline(res.data)
       setDisable(false)
-      if(res.data.length === 0 ){
-        alert("There are no posts yet")
-      }
+      
     })
     .catch(err => {
       if(err.code === "ERR_NETWORK"){
@@ -32,24 +34,19 @@ export default function TimelinePage() {
         navigate("/")
       } 
     })
-
   }
 
   useEffect(()=>{
   getTimeline()
-  },[]);
+  },[statusModal]);
   
-
   function publish(e){
     e.preventDefault();
     setDisable(true)
     const objPublication= {
-      postUrl,
-      postText
-    };
-
-    
-    
+        postUrl,
+        postText
+      };
     apiAuth.postPublish(myObj.token, objPublication)
     .then(res =>{
       getTimeline()
@@ -60,12 +57,10 @@ export default function TimelinePage() {
     .catch(err => alert("Houve um erro ao publicar seu link"))
   }
 
-  
-  
   return (
-
   <Container>
-     
+     <MeuComponente/>
+
     <Logo pic={myObj.pictureUrl}>
       <h1>linkr</h1>
       <div className="imgPerfil"></div>
@@ -76,10 +71,10 @@ export default function TimelinePage() {
         <h1>timeline</h1>
       </HeaderTime>
       
-      <ShareBar>
+      <ShareBar data-test="publish-box">
         <p>What are you going to share today?</p>
         <form onSubmit={publish}>
-          <input
+          <input data-test="link"
           placeholder="http//..."
           type="url"
           id="postUrl"
@@ -88,7 +83,7 @@ export default function TimelinePage() {
           required
           />
 
-          <input
+          <input data-test="description" 
           placeholder="Awesome article about #javascript"
           type="text"
           id="postText"
@@ -96,26 +91,34 @@ export default function TimelinePage() {
           onChange={(e) => setPosttext(e.target.value)}
           />
           
-          <button type="submit" disabled={disable}>
+          <button data-test="publish-btn"
+          type="submit" 
+          disabled={disable}>
            {disable ? "Publishing..." : "Publish"}
           </button>
         </form>
       </ShareBar>
+
       <Loading aux = {disable}>
         <div className="spinner is-animating"></div>
         <p>Loading...</p>
       </Loading>
-      <PostsRender>
-        {timeline.map((post)=>(
-          <EachPost key={post.id} prop={post}/>
-          
-        ))}
-      </PostsRender>
+      {timeline ? (
+       <PostsRender>
+       {timeline.map((post)=>(
+         <EachPost key={post.id} prop={post}/>
+       ))}
+     </PostsRender>) :
+     (<p className="anyOnePost" data-test="message" > There are no posts yet</p>)
+    }
+     
 
     </Timeline>
 </Container>
 );
 }
+
+
 const Loading = styled.div`
 display: ${(props) => !props.aux ? "none" : "flex"};
 margin-top: 10px;
@@ -153,7 +156,7 @@ const PostsRender = styled.ul`
   margin-top: 10px;
 `;
 
-const ShareBar = styled.ul`
+const ShareBar = styled.div`
   width: 100%;
   height: 180px;
   background-color: white;
@@ -240,6 +243,18 @@ const Timeline = styled.div`
 
   @media (min-width: 661px) {
     width: 661px;
+  }
+
+  .anyOnePost{
+    margin-top: 20px;
+    font-family: Oswald;
+    font-size: 24px;
+    font-weight: 400;
+    line-height: 36px;
+    letter-spacing: 0em;
+    text-align: center;
+    color: white;
+
   }
 
 `;
