@@ -24,5 +24,10 @@ function deletePost (token, params){
     return promisse
 }
 
-const apiAuth = {getTimeline, postPublish, deletePost};
+function likePost(id, token, liked){
+    const promise = axios.post(`${process.env.REACT_APP_API_URL}/like/${id}`, {liked}, getConfig(token));
+    return promise
+}
+
+const apiAuth = {getTimeline, postPublish, deletePost, likePost};
 export default apiAuth
