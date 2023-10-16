@@ -19,10 +19,10 @@ function postPublish (token, body){
 }
 
 function deletePost (token, params){
-    
     const promisse = axios.delete(`${process.env.REACT_APP_API_URL}/delete/${params}`, getConfig(token))
     return promisse
 }
+
 
 function likePost(id, token, liked){
     const promise = axios.post(`${process.env.REACT_APP_API_URL}/like/${id}`, {liked}, getConfig(token));
@@ -30,4 +30,13 @@ function likePost(id, token, liked){
 }
 
 const apiAuth = {getTimeline, postPublish, deletePost, likePost};
+
+function updatePost (token, params, body){
+    const promisse = axios.post(`${process.env.REACT_APP_API_URL}/update-post/${params}`, body, getConfig(token))
+    return promisse
+}
+
+
+const apiAuth = {getTimeline, postPublish, deletePost, updatePost};
+
 export default apiAuth
