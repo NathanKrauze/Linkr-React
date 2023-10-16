@@ -29,8 +29,6 @@ function likePost(id, token, liked){
     return promise
 }
 
-const apiAuth = {getTimeline, postPublish, deletePost, likePost};
-
 function updatePost (token, params, body){
     const promisse = axios.post(`${process.env.REACT_APP_API_URL}/update-post/${params}`, body, getConfig(token))
     return promisse
