@@ -14,7 +14,6 @@ export default function EachPost({ prop }) {
   const [edit, setEdit] = useState(0);
   const [liked, setLiked] = useState(prop.usersLikes.includes(myObj.idUser));
   const [likes, setLikes] = useState(Number.parseInt(prop.likes))
-  const [edit, setEdit] = useState(0)
   const {setStatusModal, setIdPost, statusModal} = useContext(PostContext)
   const [contentStatus, setContentStatus] = useState(true)
   const [postContent, setPostContent] = useState(prop.postText)
