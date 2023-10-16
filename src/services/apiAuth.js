@@ -37,6 +37,6 @@ function updatePost (token, params, body){
 }
 
 
-const apiAuth = {getTimeline, postPublish, deletePost, updatePost};
+const apiAuth = {getTimeline, postPublish, deletePost, likePost, updatePost};
 
 export default apiAuth
