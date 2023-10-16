@@ -3,20 +3,47 @@ import ReactModal from "react-modal";
 import React, { useContext, useEffect, useState, useRef } from "react";
 import metadata from "url-metadata";
 import apiAuth from "../services/apiAuth.js";
+import axios from "axios";
+import { Tooltip } from "react-tooltip";
 import { PostContext } from "../contexts/postContext.jsx";
 import { Link } from "react-router-dom";
 
 export default function EachPost({ prop }) {
-  const user = localStorage.getItem("user");
-  const myObj = JSON.parse(user);
+  const user = localStorage.getItem("user")
+  const myObj = JSON.parse(user)
   const [edit, setEdit] = useState(0);
-  const { setStatusModal, setIdPost, statusModal } = useContext(PostContext);
-  const [contentStatus, setContentStatus] = useState(true);
-  const [postContent, setPostContent] = useState(prop.postText);
+  const [liked, setLiked] = useState(prop.usersLikes.includes(myObj.idUser));
+  const [likes, setLikes] = useState(Number.parseInt(prop.likes))
+  const {setStatusModal, setIdPost, statusModal} = useContext(PostContext)
+  const [contentStatus, setContentStatus] = useState(true)
+  const [postContent, setPostContent] = useState(prop.postText)
+
   const inputRef = useRef(null);
   const [count, setCount] = useState(0);
+  
+  function curtirPost(e) {
+    const newLiked = !liked
+    setLiked(!liked)
+    apiAuth.likePost(prop.id, myObj.token, newLiked)
+      .then(()=>{
+        if(!liked){
+          setLikes(likes + 1)
+        } else{
+          setLikes(likes - 1)
+        }
+      })
+      .catch(err=>{
+        alert(err.response.data)
+      })
+  }
 
-  ReactModal.setAppElement("#root");
+
+  function searchLikes(){
+    console.log("oi")
+  }
+
+  ReactModal.setAppElement('#root')
+
 
   function curtirPost(e) {
     e.preventDefault();
@@ -55,6 +82,7 @@ export default function EachPost({ prop }) {
       setPostContent(prop.postText);
       setCount(0);
     }
+
     setTimeout(() => {
       inputRef.current.focus();
     }, 0);
@@ -221,6 +249,7 @@ const TimelineList = styled.li`
       text-align: left;
     }
 
+
     p {
       color: white;
       font-family: Lato;
@@ -250,6 +279,18 @@ const TimelineList = styled.li`
       color: white;
       margin-top: 10px;
     }
+
+      .tooltipLink{
+        text-decoration: none;
+      }
+
+      h3{
+        font-family: Lato;
+        font-size: 11px;
+        font-style: normal;
+        font-weight: 700;
+      }
+
 
     ion-icon {
       cursor: pointer;
