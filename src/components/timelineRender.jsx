@@ -1,7 +1,6 @@
 import styled from "styled-components";
 import ReactModal from "react-modal";
 import React, { useContext, useEffect, useState, useRef } from "react";
-import metadata from "url-metadata";
 import apiAuth from "../services/apiAuth.js";
 import axios from "axios";
 import { Tooltip } from "react-tooltip";
@@ -14,7 +13,7 @@ export default function EachPost({ prop }) {
   const [edit, setEdit] = useState(0);
   //const [liked, setLiked] = useState(prop.usersLikes.includes(myObj.idUser));
   //const [likes, setLikes] = useState(Number.parseInt(prop.likes))
-  const {setStatusModal, setIdPost, statusModal} = useContext(PostContext)
+  const {setStatusModal, setIdPost} = useContext(PostContext)
   const [contentStatus, setContentStatus] = useState(true)
   const [postContent, setPostContent] = useState(prop.postText)
   const inputRef = useRef(null);
@@ -24,6 +23,7 @@ export default function EachPost({ prop }) {
     description: "",
     image: undefined,
   });
+
   ReactModal.setAppElement('#root')
 
   function curtirPost(e) {
@@ -60,13 +60,10 @@ export default function EachPost({ prop }) {
       },
     }) {
       console.log(`${status} ${statusText}\n${message}`);
-      
     }
+      console.log(urlMetaData) //manter esse console.log
   };
 
-  function curtirPost(e) {
-    e.preventDefault();
-  }
 
   useEffect(() => {
     if (myObj.idUser === prop.idUser) {
