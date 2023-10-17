@@ -17,10 +17,15 @@ export default function EachPost({ prop }) {
   const {setStatusModal, setIdPost, statusModal} = useContext(PostContext)
   const [contentStatus, setContentStatus] = useState(true)
   const [postContent, setPostContent] = useState(prop.postText)
-
   const inputRef = useRef(null);
   const [count, setCount] = useState(0);
-  
+  const [urlMetaData, setUrlMetaData] = useState({
+    title: "",
+    description: "",
+    image: undefined,
+  });
+  ReactModal.setAppElement('#root')
+
   function curtirPost(e) {
     /*const newLiked = !liked
     setLiked(!liked)
@@ -37,13 +42,27 @@ export default function EachPost({ prop }) {
       })*/
   }
 
-
   function searchLikes(){
     console.log("oi")
   }
-
-  ReactModal.setAppElement('#root')
-
+  
+  const fetchMetaData = async () => {
+    try {
+      const {
+        data: { title, description, images },
+      } = await axios.get(`https://jsonlink.io/api/extract?url=${prop.postUrl}`);
+      setUrlMetaData(() => ({ title, description, image: images[0] }));
+    } catch ({
+      response: {
+        status,
+        statusText,
+        data: { message },
+      },
+    }) {
+      console.log(`${status} ${statusText}\n${message}`);
+      
+    }
+  };
 
   function curtirPost(e) {
     e.preventDefault();
@@ -53,18 +72,11 @@ export default function EachPost({ prop }) {
     if (myObj.idUser === prop.idUser) {
       setEdit(1);
     }
-    //buscarMetadados();
+    fetchMetaData();
+    
   }, []);
 
-  const buscarMetadados = async () => {
-    try {
-      const data = await metadata(prop.postUrl);
-      console.log(data);
-    } catch (error) {
-      console.error("Erro ao buscar metadados", error);
-    }
-  };
-
+ 
   function openDialog(e) {
     e.preventDefault();
     setStatusModal(true);
@@ -82,7 +94,6 @@ export default function EachPost({ prop }) {
       setPostContent(prop.postText);
       setCount(0);
     }
-
     setTimeout(() => {
       inputRef.current.focus();
     }, 0);
@@ -105,9 +116,8 @@ export default function EachPost({ prop }) {
           alert(err.response.data);
           setContentStatus(false);
         });
-    }
-  }
-
+    }}
+  
   const boldHashtags = () => {
     return postContent?.split(" ").map((word, i) => {
       if (word[0] === "#") {
@@ -167,7 +177,16 @@ export default function EachPost({ prop }) {
             className="urlPost"
             onClick={() => window.open(prop.postUrl, "_blank")}
           >
-            {prop.postUrl}
+            <div className="metaText">
+              <h1>{urlMetaData.title}</h1>
+              <h2>{urlMetaData.description}</h2>
+              <h3>{prop.postUrl}</h3>
+            </div>
+            <div className="metaImg">
+              {urlMetaData.image && (
+                <img src={urlMetaData.image} alt="urlMetaDataImage" />
+              )}
+            </div>
           </div>
         </div>
       </TimelineList>
@@ -208,15 +227,66 @@ const TimelineList = styled.li`
   }
 
   .urlPost {
+    position: relative;
     margin-top: 10px;
     width: calc(100% - 18px);
-    height: 115px;
+    height: auto;
     border-radius: 10px;
     border: 1px solid #4d4d4d;
-    padding: 5px;
+    padding: 20px;
     box-sizing: border-box;
     word-wrap: break-word;
     cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+
+    .metaText{
+      width: 350px;
+      h1{
+        color:white;
+        font-family: Lato;
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 19px;
+        letter-spacing: 0em;
+        text-align: left;
+      }
+      h2{
+        margin-top: 5px;
+        color:#9B9595;
+        font-family: Lato;
+        font-size: 11px;
+        font-weight: 400;
+        line-height: 13px;
+        letter-spacing: 0em;
+        text-align: left;
+      }
+      h3{
+        margin-top: 10px;
+        color:#CECECE;
+        font-family: Lato;
+        font-size: 11px;
+        font-weight: 400;
+        line-height: 13px;
+        letter-spacing: 0em;
+        text-align: left;
+      }
+    }
+
+    .metaImg{
+    height: 115px;
+    background-color: #4d4d4d;
+    border-radius: 0 6px 6px 0;
+    img {
+      position: absolute;
+      height: 100%;
+      right: 0;
+      top:0;
+      object-fit: cover;
+      border-radius: 0 6px 6px 0;
+    }
+    }
+
   }
 
   .contentPost {
@@ -224,8 +294,10 @@ const TimelineList = styled.li`
     flex-direction: column;
     padding: 10px;
     box-sizing: border-box;
-    width: 100%;
-
+    width: 611px;
+    @media (max-width: 661px) {
+    width:100%
+  }
     .postText {
       display: ${(props) => (props.disText ? "none" : "inline")};
       width: auto;
