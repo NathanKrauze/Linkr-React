@@ -11,11 +11,12 @@ import { useState } from "react";
 export default function App() {
   const [statusModal, setStatusModal] = useState(false);
   const [idPost, setIdPost] = useState(0);
+  const [reRenderTimeline, setReRenderTimeline] = useState()
   return (
     <PagesContainer>
       <AuthProvider>
         <PostContext.Provider
-          value={{ statusModal, setStatusModal, idPost, setIdPost }}
+          value={{ statusModal, setStatusModal, idPost, setIdPost, reRenderTimeline, setReRenderTimeline }}
         >
           <Routes>
             <Route path="/" element={<LoginPage />} />
