@@ -5,13 +5,15 @@ import SignupPage from "./pages/SignupPage.jsx";
 import TimelinePage from "./pages/TimelinePage.jsx";
 import HashtagPage from "./pages/HashtagPage.jsx";
 import AuthProvider from "./contexts/authContext.jsx";
+import { AuthContext } from "./contexts/authContext.jsx";
 import { PostContext } from "./contexts/postContext.jsx";
-import { useState } from "react";
+import { useContext, useState } from "react";
 
 export default function App() {
   const [statusModal, setStatusModal] = useState(false);
   const [idPost, setIdPost] = useState(0);
-  const [reRenderTimeline, setReRenderTimeline] = useState()
+  const [reRenderTimeline, setReRenderTimeline] = useState();
+  
   return (
     <PagesContainer>
       <AuthProvider>

@@ -4,6 +4,7 @@ import styled from "styled-components";
 import apiAuth from "../services/apiAuth.js";
 import EachPost from "../components/timelineRender.jsx";
 import MeuComponente from "../components/modalComponent.jsx";
+import Header from "../components/Header.jsx";
 import { PostContext } from "../contexts/postContext.jsx";
 import Trending from "../components/Trending.jsx";
 import { useInterval } from 'usehooks-ts'
@@ -25,9 +26,9 @@ export default function TimelinePage() {
     if(props === "effect" || props === "publish" || props ==="button"){
     setDisable(true);
     apiAuth
-      .getTimeline(myObj.token)
+      .getTimeline(myObj ? myObj.token : "")
       .then((res) => {
-        setNumbNewPosts(res.data.length)
+        setNumbNewPosts(res.data.length);
         setTimeline(res.data);
         setDisable(false);
         setDifCountP(0)
@@ -96,10 +97,7 @@ export default function TimelinePage() {
     <Container>
       <MeuComponente />
 
-      <Logo pic={myObj.pictureUrl}>
-        <h1>linkr</h1>
-        <div className="imgPerfil"></div>
-      </Logo>
+      <Header />
 
       <TimelineContainer>
         <Timeline>
@@ -150,12 +148,14 @@ export default function TimelinePage() {
               {timeline.map((post) => (
                 <EachPost key={post.id} prop={post} />
               ))}
-            </PostsRender>) 
-            : timeline.length === 0 ? (
+            </PostsRender>
+          ) : timeline.length === 0 ? (
             <p className="anyOnePost" data-test="message">
               There are no posts yet
             </p>
-          ): <></>}
+          ) : (
+            <></>
+          )}
         </Timeline>
 
         <Trending posts={timeline} />
@@ -333,41 +333,6 @@ const HeaderTime = styled.div`
     margin-left: 10px;
     margin-top: 20px;
     margin-bottom: 20px;
-  }
-`;
-
-const Logo = styled.section`
-  display: flex;
-  justify-content: left;
-  background-color: #151515;
-  height: 49px;
-  position: fixed;
-  width: 100%;
-  z-index: 3;
-
-  .imgPerfil {
-    position: absolute;
-    right: 10px;
-    top: 4px;
-    background-color: white;
-    width: 40px;
-    height: 40px;
-    border-radius: 26.5px;
-    background-image: url(${(props) => JSON.stringify(props.pic)});
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-  }
-
-  h1 {
-    margin-left: 10px;
-    color: #ffffff;
-    font-family: Passion One;
-    font-size: 40px;
-    font-weight: 700;
-    line-height: 54px;
-    letter-spacing: 0.05em;
-    text-align: left;
   }
 `;
 
