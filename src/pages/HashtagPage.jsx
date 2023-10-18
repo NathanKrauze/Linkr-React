@@ -3,13 +3,12 @@ import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 import EachPost from "../components/timelineRender.jsx";
 import MeuComponente from "../components/modalComponent.jsx";
+import Header from "../components/Header.jsx";
 import { PostContext } from "../contexts/postContext.jsx";
 import axios from "axios";
 
 export default function HashtagPage() {
   const navigate = useNavigate();
-  const user = localStorage.getItem("user");
-  const myObj = JSON.parse(user);
   const [postsHashtag, setPostsHashtag] = useState([]);
   const [disable, setDisable] = useState(false);
   const { statusModal } = useContext(PostContext);
@@ -46,14 +45,11 @@ export default function HashtagPage() {
     <Container>
       <MeuComponente />
 
-      <Logo pic={myObj.pictureUrl}>
-        <h1>linkr</h1>
-        <div className="imgPerfil"></div>
-      </Logo>
+      <Header />
 
       <Timeline>
-        <HeaderTime >
-          <h1 data-test="hashtag-title" ># {hashtag}</h1>
+        <HeaderTime>
+          <h1 data-test="hashtag-title"># {hashtag}</h1>
         </HeaderTime>
 
         <Loading aux={disable}>
@@ -61,7 +57,7 @@ export default function HashtagPage() {
           <p>Loading...</p>
         </Loading>
         {postsHashtag ? (
-          <PostsRender >
+          <PostsRender>
             {postsHashtag.map((post) => (
               <EachPost key={post.id} prop={post} />
             ))}
@@ -141,41 +137,6 @@ const HeaderTime = styled.div`
     margin-left: 10px;
     margin-top: 20px;
     margin-bottom: 20px;
-  }
-`;
-
-const Logo = styled.section`
-  display: flex;
-  justify-content: left;
-  background-color: #151515;
-  height: 49px;
-  position: fixed;
-  width: 100%;
-  z-index: 3;
-
-  .imgPerfil {
-    position: absolute;
-    right: 10px;
-    top: 4px;
-    background-color: white;
-    width: 40px;
-    height: 40px;
-    border-radius: 26.5px;
-    background-image: url(${(props) => JSON.stringify(props.pic)});
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-  }
-
-  h1 {
-    margin-left: 10px;
-    color: #ffffff;
-    font-family: Passion One;
-    font-size: 40px;
-    font-weight: 700;
-    line-height: 54px;
-    letter-spacing: 0.05em;
-    text-align: left;
   }
 `;
 
