@@ -6,7 +6,8 @@ import EachPost from "../components/timelineRender.jsx";
 import MeuComponente from "../components/modalComponent.jsx";
 import Header from "../components/Header.jsx";
 import { PostContext } from "../contexts/postContext.jsx";
-import Trending from "../components/Trending";
+import Trending from "../components/Trending.jsx";
+import { useInterval } from 'usehooks-ts'
 
 export default function TimelinePage() {
   const navigate = useNavigate();
@@ -16,16 +17,21 @@ export default function TimelinePage() {
   const myObj = JSON.parse(user);
   const [timeline, setTimeline] = useState([]);
   const [disable, setDisable] = useState(false);
-  const { statusModal } = useContext(PostContext);
+  const { statusModal, reRenderTimeline } = useContext(PostContext);
+  const [numbNewPosts, setNumbNewPosts] = useState(0);
+  const [difCountP, setDifCountP] = useState(0);
+  const [buttonClicked, setbuttonClicked] = useState(false)
 
-  function getTimeline() {
+  function getTimeline(props) {
+    if(props === "effect" || props === "publish" || props ==="button"){
     setDisable(true);
     apiAuth
       .getTimeline(myObj ? myObj.token : "")
       .then((res) => {
-        console.log(res.data.length);
+        setNumbNewPosts(res.data.length);
         setTimeline(res.data);
         setDisable(false);
+        setDifCountP(0)
       })
       .catch((err) => {
         if (err.code === "ERR_NETWORK") {
@@ -33,14 +39,41 @@ export default function TimelinePage() {
             "An error occured while trying to fetch the posts, please refresh the page"
           );
         } else {
+          console.log(err)
           navigate("/");
         }
       });
+    } 
+    
+    else {
+      apiAuth
+      .getTimeline(myObj.token)
+      .then((res) => {
+        if(res.data.length > numbNewPosts){
+        setDifCountP(res.data.length - numbNewPosts)
+        }
+      })
+      .catch((err) => {
+        if (err.code === "ERR_NETWORK") {
+          alert(
+            "An error occured while trying to fetch the posts, please refresh the page"
+          );
+        } else {
+          console.log(err)
+          navigate("/");
+        }
+      });
+    }
   }
 
+  useInterval( async () => {
+    getTimeline("interval")
+    },15000)
+
   useEffect(() => {
-    getTimeline();
-  }, [statusModal]);
+    getTimeline("effect");
+    
+  }, [statusModal,reRenderTimeline]);
 
   function publish(e) {
     e.preventDefault();
@@ -52,7 +85,7 @@ export default function TimelinePage() {
     apiAuth
       .postPublish(myObj.token, objPublication)
       .then((res) => {
-        getTimeline();
+        getTimeline("publish");
         setPostUrl("");
         setPosttext("");
         setDisable(false);
@@ -105,7 +138,12 @@ export default function TimelinePage() {
             <p>Loading...</p>
           </Loading>
 
-          {timeline.length > 0 ? (
+          <NewPostButton dis = {difCountP} onClick={() => getTimeline("button")}>
+            <p>{difCountP} new posts, load more! </p>
+            <ion-icon name="sync-circle-outline"></ion-icon>
+          </NewPostButton>
+
+          {timeline.length>0 ? (
             <PostsRender>
               {timeline.map((post) => (
                 <EachPost key={post.id} prop={post} />
@@ -125,6 +163,34 @@ export default function TimelinePage() {
     </Container>
   );
 }
+
+const NewPostButton = styled.button`
+  display: ${(props) => (props.dis > 0 ? "inherit" :"none" )};
+  margin-top: 25px;
+  height: 61px;
+  box-shadow: 0px 4px 4px 0px #00000040;
+  border-radius: 16px;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  padding: 0;
+  
+  p{    
+    font-family: Lato;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 19px;
+    letter-spacing: 0em;
+    text-align: center;
+
+  }
+  ion-icon{
+    position: absolute;
+    top:30%;
+    right: 200px;
+  }
+
+`;
 
 const Loading = styled.div`
   display: ${(props) => (!props.aux ? "none" : "flex")};

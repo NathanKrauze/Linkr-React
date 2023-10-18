@@ -13,7 +13,7 @@ export default function EachPost({ prop }) {
   const [edit, setEdit] = useState(0);
   //const [liked, setLiked] = useState(prop.usersLikes.includes(myObj.idUser));
   //const [likes, setLikes] = useState(Number.parseInt(prop.likes))
-  const {setStatusModal, setIdPost} = useContext(PostContext)
+  const {setStatusModal, setIdPost, setReRenderTimeline } = useContext(PostContext)
   const [contentStatus, setContentStatus] = useState(true)
   const [postContent, setPostContent] = useState(prop.postText)
   const inputRef = useRef(null);
@@ -60,8 +60,9 @@ export default function EachPost({ prop }) {
       },
     }) {
       console.log(`${status} ${statusText}\n${message}`);
-    }
       console.log(urlMetaData) //manter esse console.log
+    }
+    
   };
 
 
@@ -113,7 +114,8 @@ export default function EachPost({ prop }) {
           alert(err.response.data);
           setContentStatus(false);
         });
-    }}
+        setReRenderTimeline(prop.id)
+      }}
   
   const boldHashtags = () => {
     return postContent?.split(" ").map((word, i) => {
@@ -272,14 +274,15 @@ const TimelineList = styled.li`
 
     .metaImg{
     height: 115px;
-    background-color: #4d4d4d;
+    width: 200px;
     border-radius: 0 6px 6px 0;
     img {
       position: absolute;
-      height: 100%;
-      right: 0;
-      top:0;
-      object-fit: cover;
+      height: calc(100% + 2px);
+      width: 200px;
+      right:-1px;
+      top:-1px;
+      object-fit: fill;
       border-radius: 0 6px 6px 0;
     }
     }
