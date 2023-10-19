@@ -10,9 +10,12 @@ export default function SignupPage() {
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
   const [pictureUrl, setPictureUrl] = useState("");
+  const [btnDisabled, setBtnDisabled] = useState(false);
 
-  function signUp(e) {
+  async function signUp(e) {
     e.preventDefault();
+
+    setBtnDisabled(true);
 
     const objUser = {
       email,
@@ -21,19 +24,25 @@ export default function SignupPage() {
       pictureUrl,
     };
 
-    const promise = axios.post(
-      `${process.env.REACT_APP_API_URL}/signup`,
-      objUser
-    );
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL}/signup`,
+        objUser
+      );
 
-    promise.then((res) => {
-      console.log(res.data);
+      console.log(response.data);
+
       navigate("/");
-    });
-    promise.catch((err) => {
-      console.log("ERROR: ", err.response.data);
-      alert(err.response.data);
-    });
+    } catch (error) {
+      console.error("Error: ", error);
+      setBtnDisabled(false);
+
+      if (error.response) {
+        alert(error.response.data);
+      } else {
+        alert("An error occurred. Please try again later.");
+      }
+    }
   }
 
   return (
@@ -82,7 +91,7 @@ export default function SignupPage() {
             onChange={(e) => setPictureUrl(e.target.value)}
             required
           />
-          <button data-test="sign-up-btn" type="submit">
+          <button data-test="sign-up-btn" type="submit" disabled={btnDisabled}>
             Sign Up
           </button>
         </form>

@@ -22,6 +22,18 @@ export default function AuthProvider({ children }) {
     }
   }, []);
 
+  const [modalOpen, setModalOpen] = useState(false);
+
+  const logout = () => {
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
+    localStorage.removeItem("idUser");
+    localStorage.removeItem("pictureUrl");
+    setModalOpen(false);
+
+    navigate("/");
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -33,6 +45,9 @@ export default function AuthProvider({ children }) {
         setUsername,
         pictureUrl,
         setPictureUrl,
+        logout,
+        modalOpen,
+        setModalOpen,
       }}
     >
       {children}

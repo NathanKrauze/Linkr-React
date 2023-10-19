@@ -6,36 +6,44 @@ import axios from "axios";
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [btnDisabled, setBtnDisabled] = useState(false);
 
   const navigate = useNavigate();
 
-  function signIn(e) {
+  async function signIn(e) {
     e.preventDefault();
+
+    setBtnDisabled(true);
 
     const newLogin = {
       email: email,
       password: password,
     };
 
-    const promise = axios.post(
-      `${process.env.REACT_APP_API_URL}/signin`,
-      newLogin
-    );
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL}/signin`,
+        newLogin
+      );
 
-    promise.then((res) => {
-      console.log(res.data);
-      const { token, idUser, username, pictureUrl } = res.data;
+      console.log(response.data);
+      const { token, idUser, username, pictureUrl } = response.data;
       localStorage.setItem(
         "user",
         JSON.stringify({ token, idUser, username, pictureUrl })
       );
 
       navigate("/timeline");
-    });
-    promise.catch((err) => {
-      console.log("ERROR: ", err.response);
-      alert(err.response.data);
-    });
+    } catch (error) {
+      console.error("Error: ", error);
+      setBtnDisabled(false);
+
+      if (error.response) {
+        alert(error.response.data);
+      } else {
+        alert("An error occurred. Please try again later.");
+      }
+    }
   }
 
   return (
@@ -65,7 +73,7 @@ export default function LoginPage() {
             onChange={(e) => setPassword(e.target.value)}
             required
           />
-          <button data-test="login-btn" type="submit">
+          <button data-test="login-btn" type="submit" disabled={btnDisabled}>
             Log In
           </button>
         </form>
