@@ -13,13 +13,12 @@ export default function EachPost({ prop }) {
   const [edit, setEdit] = useState(0);
   const [liked, setLiked] = useState(prop.usersLikes?.includes(myObj.idUser));
   const [likes, setLikes] = useState(Number.parseInt(prop.likes))
-  const { setStatusModal, setIdPost, statusModal } = useContext(PostContext)
   const {setStatusModal, setIdPost, setReRenderTimeline } = useContext(PostContext)
   const [contentStatus, setContentStatus] = useState(true)
   const [postContent, setPostContent] = useState(prop.postText)
   const inputRef = useRef(null);
   const [count, setCount] = useState(0);
-  const [likesUsers, setLikesUsers] = useState([{username: 'fulano'}, {username: 'fulano'}])
+  const [likesUsers, setLikesUsers] = useState([{username: ''}, {username: ''}])
   const [urlMetaData, setUrlMetaData] = useState({
     title: "",
     description: "",
