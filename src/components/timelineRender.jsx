@@ -11,13 +11,14 @@ export default function EachPost({ prop }) {
   const user = localStorage.getItem("user")
   const myObj = JSON.parse(user)
   const [edit, setEdit] = useState(0);
-  //const [liked, setLiked] = useState(prop.usersLikes.includes(myObj.idUser));
-  //const [likes, setLikes] = useState(Number.parseInt(prop.likes))
+  const [liked, setLiked] = useState(prop.usersLikes?.includes(myObj.idUser));
+  const [likes, setLikes] = useState(Number.parseInt(prop.likes))
   const {setStatusModal, setIdPost, setReRenderTimeline } = useContext(PostContext)
   const [contentStatus, setContentStatus] = useState(true)
   const [postContent, setPostContent] = useState(prop.postText)
   const inputRef = useRef(null);
   const [count, setCount] = useState(0);
+  const [likesUsers, setLikesUsers] = useState([{username: ''}, {username: ''}])
   const [urlMetaData, setUrlMetaData] = useState({
     title: "",
     description: "",
@@ -27,23 +28,27 @@ export default function EachPost({ prop }) {
   ReactModal.setAppElement('#root')
 
   function curtirPost(e) {
-    /*const newLiked = !liked
+    const newLiked = !liked
     setLiked(!liked)
     apiAuth.likePost(prop.id, myObj.token, newLiked)
-      .then(()=>{
-        if(!liked){
+      .then(() => {
+        if (!liked) {
           setLikes(likes + 1)
-        } else{
+        } else {
           setLikes(likes - 1)
         }
       })
-      .catch(err=>{
+      .catch(err => {
         alert(err.response.data)
-      })*/
+      })
   }
 
-  function searchLikes(){
-    console.log("oi")
+  function searchLikes() {
+    apiAuth.getUsersLikes(prop.id, myObj.token)
+      .then(res=>{
+        setLikesUsers(res.data)
+      })
+      .catch(err=>alert(err.response.data))
   }
   
   const fetchMetaData = async () => {
@@ -64,7 +69,6 @@ export default function EachPost({ prop }) {
     }
     
   };
-
 
   useEffect(() => {
     if (myObj.idUser === prop.idUser) {
@@ -90,6 +94,7 @@ export default function EachPost({ prop }) {
     } else {
       setContentStatus(true);
       setPostContent(prop.postText);
+
       setCount(0);
     }
     setTimeout(() => {
@@ -150,8 +155,17 @@ export default function EachPost({ prop }) {
         </div>
         <div className="sideBarPost">
           <Image data={prop.pictureUrl}></Image>
-          <ion-icon name="heart-outline"  data-test="like-btn" onClick={curtirPost}></ion-icon>
-          <p data-test="counter">13 likes</p>
+          <ion-icon name={liked ? 'heart' : 'heart-outline'} data-test='like-btn' onClick={curtirPost}></ion-icon>
+          <a data-tooltip-id={`likes-tooltip${prop.id}`} className="tooltipLink" onMouseOver={searchLikes}>
+            <p data-test='counter'>{likes} likes</p>
+          </a>
+          <Tooltip
+            id={`likes-tooltip${prop.id}`}
+            style={{ borderRadius: '3px', background: 'rgba(255, 255, 255, 0.90)', color: 'black' }}
+            place="bottom"
+          >
+            {likes == 0 ? <h3>este post não tem likes</h3> : likes == 1 ? <h3>curtido por {likesUsers[0]?.username}</h3> : <h3>{likesUsers[0]?.username}, {likesUsers[1]?.username} e outras {likes - 2} pessoas </h3>}
+          </Tooltip>
         </div>
 
         <div className="contentPost">
@@ -159,6 +173,7 @@ export default function EachPost({ prop }) {
 
           <input
             data-test="edit-input"
+
             className="postText"
             disabled={contentStatus}
             ref={inputRef}
@@ -168,6 +183,7 @@ export default function EachPost({ prop }) {
             onChange={(e) => setPostContent(e.target.value)}
             onKeyUp={handlePress}
           />
+
           <p data-test="description" className="textPostP">
             {postText}
           </p>
@@ -205,7 +221,6 @@ const TimelineList = styled.li`
   @media (max-width: 661px) {
     border-radius: 0px;
   }
-
   .addEdit {
     cursor: pointer;
     display: ${(props) => (props.edit ? "inirit" : "none")};
