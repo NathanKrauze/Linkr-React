@@ -122,6 +122,9 @@ const Timeline = styled.div`
   @media (min-width: 661px) {
     width: 661px;
   }
+  @media (max-width: 670px){
+    margin-top: 105px;
+  }
 
   .anyOnePost {
     margin-top: 20px;
