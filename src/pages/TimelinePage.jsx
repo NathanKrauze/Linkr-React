@@ -7,9 +7,8 @@ import MeuComponente from "../components/modalComponent.jsx";
 import Header from "../components/Header.jsx";
 import { PostContext } from "../contexts/postContext.jsx";
 import Trending from "../components/Trending.jsx";
-import { useInterval } from 'usehooks-ts'
-import InfiniteScroll from 'react-infinite-scroller';
-
+import { useInterval } from "usehooks-ts";
+import InfiniteScroll from "react-infinite-scroller";
 
 export default function TimelinePage() {
   const navigate = useNavigate();
@@ -23,65 +22,59 @@ export default function TimelinePage() {
   const [numbNewPosts, setNumbNewPosts] = useState(0);
   const [difCountP, setDifCountP] = useState(0);
   const [hasMoreLoad, sethasMoreLoad] = useState(true);
-  const [partialLine, setPartialLine] = useState([])
-
-
+  const [partialLine, setPartialLine] = useState([]);
 
   function getTimeline(props) {
-    if(props === "effect" || props === "publish" || props ==="button"){
-    console.log(props)
-    apiAuth
-      .getTimeline(myObj ? myObj.token : "")
-      .then((res) => {
-        setNumbNewPosts(res.data.length);
-        setTimeline(res.data);
-        setDisable(false);
-        setDifCountP(0)
-
-      })
-      .catch((err) => {
-        if (err.code === "ERR_NETWORK") {
-          alert(
-            "An error occured while trying to fetch the posts, please refresh the page"
-          );
-        } else {
-          console.log(err.message)
-          navigate("/");
-        }
-      });
-    }    
-    else {
-      console.log(props)
+    if (props === "effect" || props === "publish" || props === "button") {
+      console.log(props);
       apiAuth
-      .getTimeline(myObj.token)
-      .then((res) => {
-        if(res.data.length > numbNewPosts){
-        setDifCountP(res.data.length - numbNewPosts)
-        }
-      })
-      .catch((err) => {
-        if (err.code === "ERR_NETWORK") {
-          alert(
-            "An error occured while trying to fetch the posts, please refresh the page"
-          );
-        } else {
-          console.log(err)
-          navigate("/");
-        }
-      });
+        .getTimeline(myObj ? myObj.token : "")
+        .then((res) => {
+          setNumbNewPosts(res.data.length);
+          setTimeline(res.data);
+          setDisable(false);
+          setDifCountP(0);
+        })
+        .catch((err) => {
+          if (err.code === "ERR_NETWORK") {
+            alert(
+              "An error occured while trying to fetch the posts, please refresh the page"
+            );
+          } else {
+            console.log(err.message);
+            navigate("/");
+          }
+        });
+    } else {
+      console.log(props);
+      apiAuth
+        .getTimeline(myObj.token)
+        .then((res) => {
+          if (res.data.length > numbNewPosts) {
+            setDifCountP(res.data.length - numbNewPosts);
+          }
+        })
+        .catch((err) => {
+          if (err.code === "ERR_NETWORK") {
+            alert(
+              "An error occured while trying to fetch the posts, please refresh the page"
+            );
+          } else {
+            console.log(err);
+            navigate("/");
+          }
+        });
     }
   }
 
-  useInterval( async () => {
-    getTimeline("interval")
-    },15000)
-
-  
+  useInterval(async () => {
+    getTimeline("interval");
+  }, 15000);
 
   useEffect(() => {
     getTimeline("effect");
-    loadMore()
-  }, [statusModal,reRenderTimeline]);
+    loadMore();
+  }, [statusModal, reRenderTimeline]);
 
   function publish(e) {
     e.preventDefault();
@@ -100,16 +93,15 @@ export default function TimelinePage() {
       })
       .catch((err) => alert("Houve um erro ao publicar seu link"));
   }
- 
-   
-  const loadMore = (e) => {
-    console.log(e)
-    if(e>=2){
-    const b = partialLine.length + 10
-    setPartialLine(timeline.slice(0,b))
-    if(timeline.length === partialLine.length) return sethasMoreLoad(false)
-  }}
 
+  const loadMore = (e) => {
+    console.log(e);
+    if (e >= 2) {
+      const b = partialLine.length + 10;
+      setPartialLine(timeline.slice(0, b));
+      if (timeline.length === partialLine.length) return sethasMoreLoad(false);
+    }
+  };
 
   return (
     <Container>
@@ -119,7 +111,7 @@ export default function TimelinePage() {
 
       <TimelineContainer>
         <Timeline>
-          <HeaderTime >
+          <HeaderTime>
             <h1>timeline</h1>
           </HeaderTime>
 
@@ -156,37 +148,36 @@ export default function TimelinePage() {
             <p>Loading...</p>
           </Loading>
 
-          <NewPostButton dis = {difCountP} onClick={() => getTimeline("button")}>
+          <NewPostButton dis={difCountP} onClick={() => getTimeline("button")}>
             <p>{difCountP} new posts, load more! </p>
             <ion-icon name="sync-circle-outline"></ion-icon>
           </NewPostButton>
 
-          
           <InfiniteScroll
-              dataLength={partialLine.length}
-              next={loadMore}
-              loadMore={loadMore}
-              hasMore={hasMoreLoad}
-              loader={
-                <Loading aux={disable}>
-                    <div className="spinner is-animating"></div>
-                    <p>Loading...</p>
-                </Loading>
-                      }
-            >
-            {timeline.length>0 ? (
-            <PostsRender>
-              {partialLine.map((post, index) => (
-                <EachPost key={index} prop={post} />
-              ))}
-            </PostsRender>
-          ) : timeline.length === 0 ? (
-            <p className="anyOnePost" data-test="message">
-              There are no posts yet
-            </p>
-          ) : (
-            <></>
-          )}
+            dataLength={partialLine.length}
+            next={loadMore}
+            loadMore={loadMore}
+            hasMore={hasMoreLoad}
+            loader={
+              <Loading aux={disable}>
+                <div className="spinner is-animating"></div>
+                <p>Loading...</p>
+              </Loading>
+            }
+          >
+            {timeline.length > 0 ? (
+              <PostsRender>
+                {partialLine.map((post, index) => (
+                  <EachPost key={index} prop={post} />
+                ))}
+              </PostsRender>
+            ) : timeline.length === 0 ? (
+              <p className="anyOnePost" data-test="message">
+                There are no posts yet
+              </p>
+            ) : (
+              <></>
+            )}
           </InfiniteScroll>
         </Timeline>
 
@@ -197,7 +188,7 @@ export default function TimelinePage() {
 }
 
 const NewPostButton = styled.button`
-  display: ${(props) => (props.dis > 0 ? "inherit" :"none" )};
+  display: ${(props) => (props.dis > 0 ? "inherit" : "none")};
   margin-top: 25px;
   height: 61px;
   box-shadow: 0px 4px 4px 0px #00000040;
@@ -206,22 +197,20 @@ const NewPostButton = styled.button`
   align-items: center;
   position: relative;
   padding: 0;
-  
-  p{    
+
+  p {
     font-family: Lato;
     font-size: 16px;
     font-weight: 400;
     line-height: 19px;
     letter-spacing: 0em;
     text-align: center;
-
   }
-  ion-icon{
+  ion-icon {
     position: absolute;
-    top:30%;
+    top: 30%;
     right: 200px;
   }
-
 `;
 
 const Loading = styled.div`
@@ -372,7 +361,7 @@ const TimelineContainer = styled.div`
   display: flex;
   justify-content: space-around;
   align-items: flex-start;
-  @media (max-width: 670px){
+  @media (max-width: 670px) {
     margin-top: 30px;
   }
 `;
