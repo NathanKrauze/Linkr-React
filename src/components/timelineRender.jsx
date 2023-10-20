@@ -188,7 +188,7 @@ export default function EachPost({ prop, functionP }) {
       <TimelineList
         data-test="post"
         edit={edit}
-        disText={contentStatus}
+        distext={contentStatus}
         iconColor={liked}
       >
         <div className="addEdit">
@@ -447,19 +447,19 @@ const TimelineList = styled.li`
       width: 100%;
     }
     .postText {
-      display: ${(props) => (props.distext === "true" ? "none" : "inline")};
+      display: ${(props) => (props.distext ? "none" : "inline")};
       width: 100%;
       font-family: lato;
       font-size: 15px;
       color: #b7b7b7;
       padding: 2px;
       word-wrap: break-word;
-      background-color: ${(props) => (props.distext === "true" ? "#171717" : "#fff")};
+      background-color: ${(props) => (props.distext ? "#171717" : "#fff")};
       border: none;
     }
 
     .textPostP {
-      display: ${(props) => (props.distext === "true" ? "inline" : "none")};
+      display: ${(props) => (props.distext ? "inline" : "none")};
       color: white;
       font-family: Lato;
       font-size: 17px;
