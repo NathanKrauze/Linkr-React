@@ -158,7 +158,7 @@ export default function EachPost({ prop }) {
         <div className="sideBarPost">
           <Image data={prop.pictureUrl} ></Image>
           <ion-icon name={liked ? 'heart' : 'heart-outline'} data-test='like-btn' onClick={curtirPost}></ion-icon>
-          <a data-tooltip-id={`likes-tooltip${prop.id}`} className="tooltipLink" onMouseOver={searchLikes}>
+          <a data-tooltip-id={`likes-tooltip${prop.id}`} className="tooltipLink" onMouseOver={searchLikes} data-test="tooltip">
             <p data-test='counter'>{likes} likes</p>
           </a>
           <Tooltip
