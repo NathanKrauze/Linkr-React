@@ -48,22 +48,42 @@ export default function TimelinePage() {
     else if(props === "interval"){
       console.log(props)
       apiAuth
-      .getTimeline(myObj.token)
-      .then((res) => {
-        if(res.data.length > numbNewPosts){
-        setDifCountP(res.data.length - numbNewPosts)
-        }
-      })
-      .catch((err) => {
-        if (err.code === "ERR_NETWORK") {
-          alert(
-            "An error occured while trying to fetch the posts, please refresh the page"
-          );
-        } else {
-          console.log(err)
-          navigate("/");
-        }
-      });
+        .getTimeline(myObj ? myObj.token : "")
+        .then((res) => {
+          setNumbNewPosts(res.data.length);
+          setTimeline(res.data);
+          setDisable(false);
+          setDifCountP(0);
+        })
+        .catch((err) => {
+          if (err.code === "ERR_NETWORK") {
+            alert(
+              "An error occured while trying to fetch the posts, please refresh the page"
+            );
+          } else {
+            console.log(err.message);
+            navigate("/");
+          }
+        });
+    } else {
+      console.log(props);
+      apiAuth
+        .getTimeline(myObj.token)
+        .then((res) => {
+          if (res.data.length > numbNewPosts) {
+            setDifCountP(res.data.length - numbNewPosts);
+          }
+        })
+        .catch((err) => {
+          if (err.code === "ERR_NETWORK") {
+            alert(
+              "An error occured while trying to fetch the posts, please refresh the page"
+            );
+          } else {
+            console.log(err);
+            navigate("/");
+          }
+        });
     }
   }
 
@@ -109,7 +129,7 @@ export default function TimelinePage() {
 
       <TimelineContainer>
         <Timeline>
-          <HeaderTime >
+          <HeaderTime>
             <h1>timeline</h1>
           </HeaderTime>
 
@@ -151,7 +171,6 @@ export default function TimelinePage() {
             <ion-icon name="sync-circle-outline"></ion-icon>
           </NewPostButton>
 
-          
           <InfiniteScroll
               dataLength={partialLine.length}
               next={loadMore}
@@ -192,7 +211,7 @@ export default function TimelinePage() {
 }
 
 const NewPostButton = styled.button`
-  display: ${(props) => (props.dis > 0 ? "inherit" :"none" )};
+  display: ${(props) => (props.dis > 0 ? "inherit" : "none")};
   margin-top: 25px;
   height: 61px;
   box-shadow: 0px 4px 4px 0px #00000040;
@@ -201,22 +220,20 @@ const NewPostButton = styled.button`
   align-items: center;
   position: relative;
   padding: 0;
-  
-  p{    
+
+  p {
     font-family: Lato;
     font-size: 16px;
     font-weight: 400;
     line-height: 19px;
     letter-spacing: 0em;
     text-align: center;
-
   }
-  ion-icon{
+  ion-icon {
     position: absolute;
-    top:30%;
+    top: 30%;
     right: 200px;
   }
-
 `;
 
 const Loading = styled.div`

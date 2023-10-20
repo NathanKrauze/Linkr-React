@@ -40,7 +40,7 @@ export default function Header() {
   return (
     <StyledHeader pic={myObj ? myObj.pictureUrl : ""} hide={hideSearch}>
       <h1>linkr</h1>
-      <div className="searchBox">
+      <div className="searchBox" >
         <DebounceInput
           minLength={3}
           debounceTimeout={300}
@@ -48,6 +48,7 @@ export default function Header() {
           onChange={(e) => searchUsers(e)}
           placeholder={'Search for people'}
           className="debounceInput"
+          data-test= "search"
           >
         </DebounceInput>
         <div className="iconBox">
@@ -56,7 +57,7 @@ export default function Header() {
         <ul className="showUsers">
           {users?.map(user=>{
             return(
-              <li onClick={()=> navigate(`/user/${user.id}`)}>
+              <li onClick={()=> navigate(`/user/${user.id}`)} data-test="user-search">
                 <img src={user.pictureUrl} alt="userProfile"/>
                 <h4>{user.username}</h4>
               </li>
