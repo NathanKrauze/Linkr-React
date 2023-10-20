@@ -5,11 +5,9 @@ import apiAuth from "../services/apiAuth.js";
 import axios from "axios";
 import { Tooltip } from "react-tooltip";
 import { PostContext } from "../contexts/postContext.jsx";
-import { Link, useNavigate} from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { BsSend } from "react-icons/bs";
 import { FaRegComments } from "react-icons/fa";
-
-
 
 export default function EachPost({ prop, functionP }) {
   const user = localStorage.getItem("user")
@@ -34,10 +32,9 @@ export default function EachPost({ prop, functionP }) {
   });
   const [metadataC, setMetaC] = useState(0)
 
-
   const navigate = useNavigate();
 
-  ReactModal.setAppElement('#root')
+  ReactModal.setAppElement("#root");
 
   function curtirPost(e) {
     const newLiked = !liked;
@@ -51,7 +48,7 @@ export default function EachPost({ prop, functionP }) {
           setLikes(likes - 1);
         }
       })
-      .catch(err=>alert(err.response.data))
+      .catch((err) => alert(err.response.data));
   }
 
   function searchLikes() {
@@ -194,7 +191,12 @@ export default function EachPost({ prop, functionP }) {
   return (
 
     <ContainerPage>
-      <TimelineList data-test="post" edit={edit} disText={contentStatus} iconColor={liked}>
+      <TimelineList
+        data-test="post"
+        edit={edit}
+        disText={contentStatus}
+        iconColor={liked}
+      >
         <div className="addEdit">
           <ion-icon
             name="trash-outline"
@@ -222,22 +224,48 @@ export default function EachPost({ prop, functionP }) {
             <p data-test="counter">{likes} likes</p>
           </a>
 
-          <IconComments onClick={toggleModal}>
-            <FaRegComments color="white" size={21} />
-            <p>{prop.comments?.length} comments</p>
+          <IconComments>
+            <FaRegComments
+              data-test="comment-btn"
+              color="white"
+              size={21}
+              onClick={toggleModal}
+            />
+            <p data-test="comment-counter">
+              {!prop.comments ? 0 : prop.comments.length} comments
+            </p>
           </IconComments>
 
           <Tooltip
             id={`likes-tooltip${prop.id}`}
-            style={{ borderRadius: '3px', background: 'rgba(255, 255, 255, 0.90)', color: 'black', zIndex: 10 }}
+            style={{
+              borderRadius: "3px",
+              background: "rgba(255, 255, 255, 0.90)",
+              color: "black",
+              zIndex: 10,
+            }}
             place="bottom"
           >
-            {likes === 0 ? <h3>este post não tem likes</h3> : likes === 1 ? <h3>curtido por {likesUsers[0]?.username}</h3> : <h3>{likesUsers[0]?.username}, {likesUsers[1]?.username} e outras {likes - 2} pessoas </h3>}
+            {likes === 0 ? (
+              <h3>este post não tem likes</h3>
+            ) : likes === 1 ? (
+              <h3>curtido por {likesUsers[0]?.username}</h3>
+            ) : (
+              <h3>
+                {likesUsers[0]?.username}, {likesUsers[1]?.username} e outras{" "}
+                {likes - 2} pessoas{" "}
+              </h3>
+            )}
           </Tooltip>
         </div>
 
         <div className="contentPost">
-          <p data-test="username" onClick={()=>navigate(`/user/${prop.idUser}`)}>{prop.username}</p>
+          <p
+            data-test="username"
+            onClick={() => navigate(`/user/${prop.idUser}`)}
+          >
+            {prop.username}
+          </p>
 
           <input
             data-test="edit-input"
@@ -273,10 +301,10 @@ export default function EachPost({ prop, functionP }) {
         </div>
       </TimelineList>
 
-      <ContainerComments openComments={openComments}>
+      <ContainerComments data-test="comment-box" openComments={openComments}>
         {prop.comments?.map((comment, i) => (
           <CardContainer key={i}>
-            <CardComment>
+            <CardComment data-test="comment">
               <img src={comment.picture} alt="user" />
 
               <div className="comment">
@@ -293,6 +321,7 @@ export default function EachPost({ prop, functionP }) {
 
           <InputContainer>
             <input
+              data-test="comment-input"
               placeholder="write a comment..."
               type="text"
               id="textComment"
@@ -301,7 +330,7 @@ export default function EachPost({ prop, functionP }) {
               required
             />
 
-            <BtnInput type="submit">
+            <BtnInput data-test="comment-submit" type="submit">
               <BsSend color="white" size={16} />
             </BtnInput>
           </InputContainer>
