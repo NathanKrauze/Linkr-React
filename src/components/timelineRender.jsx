@@ -220,6 +220,7 @@ export default function EachPost({ prop, functionP }) {
             data-tooltip-id={`likes-tooltip${prop.id}`}
             className="tooltipLink"
             onMouseOver={searchLikes}
+            data-test="tooltip"
           >
             <p data-test="counter">{likes} likes</p>
           </a>
