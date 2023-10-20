@@ -367,6 +367,7 @@ const Timeline = styled.div`
     letter-spacing: 0em;
     text-align: center;
     color: white;
+    width: 100%;
   }
 `;
 
@@ -384,8 +385,8 @@ const TimelineContainer = styled.div`
   display: flex;
   justify-content: space-around;
   align-items: flex-start;
-  @media (max-width: 670px) {
-    margin-top: 30px;
+  @media (max-width: 670px){
+    margin-top: 60px;
   }
 `;
 

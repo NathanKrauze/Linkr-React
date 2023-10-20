@@ -54,6 +54,12 @@ const StyledTrending = styled.div`
   @media (min-width: 1200px) {
     display: flex;
   }
+  @media (max-width: 1000px) and (min-width: 815px){
+    min-width: auto
+  }
+  @media (max-width: 815px){
+    display: none;
+  }
   hr {
     margin-top: 0px;
     background-color: #484848;
@@ -77,6 +83,7 @@ const StyledTrending = styled.div`
     line-height: 40px;
     margin-bottom: 5px;
     padding-left: 8px;
+    margin-right: 10px;
   }
 `;
 
