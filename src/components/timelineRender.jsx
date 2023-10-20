@@ -7,13 +7,13 @@ import { Tooltip } from "react-tooltip";
 import { PostContext } from "../contexts/postContext.jsx";
 import { Link, useNavigate } from "react-router-dom";
 
-export default function EachPost({ prop }) {
+export default function EachPost({ prop, functionP }) {
   const user = localStorage.getItem("user")
   const myObj = JSON.parse(user)
   const [edit, setEdit] = useState(0);
   const [liked, setLiked] = useState(prop.usersLikes?.includes(myObj.idUser));
   const [likes, setLikes] = useState(Number.parseInt(prop.likes))
-  const {setStatusModal, setIdPost, setReRenderTimeline } = useContext(PostContext)
+  const {setStatusModal, setIdPost } = useContext(PostContext)
   const [contentStatus, setContentStatus] = useState(true)
   const [postContent, setPostContent] = useState(prop.postText)
   const inputRef = useRef(null);
@@ -24,6 +24,7 @@ export default function EachPost({ prop }) {
     description: "",
     image: undefined,
   });
+  const [metadataC, setMetaC] = useState(0)
 
   const navigate = useNavigate();
 
@@ -61,23 +62,23 @@ export default function EachPost({ prop }) {
   }
   
   const fetchMetaData = async () => {
+    console.log(metadataC)
+    setMetaC(metadataC +1)
+
+    if(metadataC===1){
+      console.log({request: prop.postUrl})
     try {
       const {
         data: { title, description, images },
       } = await axios.get(`https://jsonlink.io/api/extract?url=${prop.postUrl}`);
+      setMetaC(0)
+      
       setUrlMetaData(() => ({ title, description, image: images[0] }));
-    } catch ({
-      response: {
-        status,
-        statusText,
-        data: { message },
-      },
-    }) {
-      console.log(`${status} ${statusText}\n${message}`);
-      console.log(urlMetaData) //manter esse console.log
-    }
-    
-  };
+    } catch {
+      console.log("error metadata")
+    } 
+  }};
+
 
   useEffect(() => {
     if (myObj.idUser === prop.idUser) {
@@ -125,12 +126,13 @@ export default function EachPost({ prop }) {
         .updatePost(myObj.token, prop.id, body)
         .then((res) => {
           setCount(0)
+          functionP("effect")
         })
         .catch((err) => {
           alert(err.response.data);
           setContentStatus(false);
         });
-        setReRenderTimeline(prop.id)
+        functionP("effect")
       }}
   
   const boldHashtags = () => {
@@ -151,7 +153,7 @@ export default function EachPost({ prop }) {
 
   return (
     <>
-      <TimelineList data-test="post" edit={edit} disText={contentStatus} iconColor={liked}>
+      <TimelineList data-test="post" edit={edit} distext={contentStatus.toString()} iconColor={liked}>
         <div className="addEdit">
           <ion-icon
             name="trash-outline"
@@ -167,7 +169,7 @@ export default function EachPost({ prop }) {
         <div className="sideBarPost">
           <Image data={prop.pictureUrl} ></Image>
           <ion-icon name={liked ? 'heart' : 'heart-outline'} data-test='like-btn' onClick={curtirPost}></ion-icon>
-          <a data-tooltip-id={`likes-tooltip${prop.id}`} className="tooltipLink" onMouseOver={searchLikes}>
+          <a data-tooltip-id={`likes-tooltip${prop.id}`} className="tooltipLink" onMouseOver={searchLikes} href="likes">
             <p data-test='counter'>{likes} likes</p>
           </a>
           <Tooltip
@@ -325,19 +327,19 @@ const TimelineList = styled.li`
     width:100%
   }
     .postText {
-      display: ${(props) => (props.disText ? "none" : "inline")};
+      display: ${(props) => (props.distext === "true" ? "none" : "inline")};
       width: auto;
       font-family: lato;
       font-size: 15px;
       color: #b7b7b7;
       padding: 2px;
       word-wrap: break-word;
-      background-color: ${(props) => (props.disText ? "#171717" : "#fff")};
+      background-color: ${(props) => (props.distext === "true" ? "#171717" : "#fff")};
       border: none;
     }
 
     .textPostP {
-      display: ${(props) => (props.disText ? "inline" : "none")};
+      display: ${(props) => (props.distext === "true" ? "inline" : "none")};
       color: white;
       font-family: Lato;
       font-size: 17px;
