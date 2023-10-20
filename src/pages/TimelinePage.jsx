@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import apiAuth from "../services/apiAuth.js";
@@ -8,6 +8,8 @@ import Header from "../components/Header.jsx";
 import { PostContext } from "../contexts/postContext.jsx";
 import Trending from "../components/Trending.jsx";
 import { useInterval } from 'usehooks-ts'
+import InfiniteScroll from 'react-infinite-scroller';
+
 
 export default function TimelinePage() {
   const navigate = useNavigate();
@@ -20,11 +22,14 @@ export default function TimelinePage() {
   const { statusModal, reRenderTimeline } = useContext(PostContext);
   const [numbNewPosts, setNumbNewPosts] = useState(0);
   const [difCountP, setDifCountP] = useState(0);
-  const [buttonClicked, setbuttonClicked] = useState(false)
+  const [hasMoreLoad, sethasMoreLoad] = useState(true);
+  const [partialLine, setPartialLine] = useState([])
+
+
 
   function getTimeline(props) {
     if(props === "effect" || props === "publish" || props ==="button"){
-    setDisable(true);
+    console.log(props)
     apiAuth
       .getTimeline(myObj ? myObj.token : "")
       .then((res) => {
@@ -32,6 +37,7 @@ export default function TimelinePage() {
         setTimeline(res.data);
         setDisable(false);
         setDifCountP(0)
+
       })
       .catch((err) => {
         if (err.code === "ERR_NETWORK") {
@@ -39,13 +45,13 @@ export default function TimelinePage() {
             "An error occured while trying to fetch the posts, please refresh the page"
           );
         } else {
-          console.log(err)
+          console.log(err.message)
           navigate("/");
         }
       });
-    } 
-    
+    }    
     else {
+      console.log(props)
       apiAuth
       .getTimeline(myObj.token)
       .then((res) => {
@@ -70,9 +76,11 @@ export default function TimelinePage() {
     getTimeline("interval")
     },15000)
 
+  
+
   useEffect(() => {
     getTimeline("effect");
-    
+    loadMore()
   }, [statusModal,reRenderTimeline]);
 
   function publish(e) {
@@ -92,6 +100,16 @@ export default function TimelinePage() {
       })
       .catch((err) => alert("Houve um erro ao publicar seu link"));
   }
+ 
+   
+  const loadMore = (e) => {
+    console.log(e)
+    if(e>=2){
+    const b = partialLine.length + 10
+    setPartialLine(timeline.slice(0,b))
+    if(timeline.length === partialLine.length) return sethasMoreLoad(false)
+  }}
+
 
   return (
     <Container>
@@ -101,7 +119,7 @@ export default function TimelinePage() {
 
       <TimelineContainer>
         <Timeline>
-          <HeaderTime>
+          <HeaderTime >
             <h1>timeline</h1>
           </HeaderTime>
 
@@ -143,10 +161,23 @@ export default function TimelinePage() {
             <ion-icon name="sync-circle-outline"></ion-icon>
           </NewPostButton>
 
-          {timeline.length>0 ? (
+          
+          <InfiniteScroll
+              dataLength={partialLine.length}
+              next={loadMore}
+              loadMore={loadMore}
+              hasMore={hasMoreLoad}
+              loader={
+                <Loading aux={disable}>
+                    <div className="spinner is-animating"></div>
+                    <p>Loading...</p>
+                </Loading>
+                      }
+            >
+            {timeline.length>0 ? (
             <PostsRender>
-              {timeline.map((post) => (
-                <EachPost key={post.id} prop={post} />
+              {partialLine.map((post, index) => (
+                <EachPost key={index} prop={post} />
               ))}
             </PostsRender>
           ) : timeline.length === 0 ? (
@@ -156,6 +187,7 @@ export default function TimelinePage() {
           ) : (
             <></>
           )}
+          </InfiniteScroll>
         </Timeline>
 
         <Trending posts={timeline} />

@@ -5,9 +5,10 @@ import apiAuth from "../services/apiAuth.js";
 import axios from "axios";
 import { Tooltip } from "react-tooltip";
 import { PostContext } from "../contexts/postContext.jsx";
-import { Link } from "react-router-dom";
+import { Link, useNavigate} from "react-router-dom";
 import { BsSend } from "react-icons/bs";
 import { FaRegComments } from "react-icons/fa";
+
 
 export default function EachPost({ prop }) {
   const user = localStorage.getItem("user");
@@ -31,7 +32,10 @@ export default function EachPost({ prop }) {
     image: undefined,
   });
 
-  ReactModal.setAppElement("#root");
+
+  const navigate = useNavigate();
+
+  ReactModal.setAppElement('#root')
 
   function curtirPost(e) {
     const newLiked = !liked;
@@ -46,8 +50,15 @@ export default function EachPost({ prop }) {
         }
       })
       .catch((err) => {
-        alert(err.response.data);
-      });
+        if (err.code === "ERR_NETWORK") {
+          alert(
+            "An error occured while trying to fetch the posts, please refresh the page"
+          );
+        } else {
+          console.log(err)
+          navigate("/");
+        }
+      })
   }
 
   function searchLikes() {
@@ -120,7 +131,9 @@ export default function EachPost({ prop }) {
       setContentStatus(true);
       apiAuth
         .updatePost(myObj.token, prop.id, body)
-        .then((res) => {})
+        .then((res) => {
+          setCount(0)
+        })
         .catch((err) => {
           alert(err.response.data);
           setContentStatus(false);
@@ -187,8 +200,8 @@ export default function EachPost({ prop }) {
   };
 
   return (
-    <ContainerPage>
-      <TimelineList data-test="post" edit={edit} disText={contentStatus}>
+    <>
+      <TimelineList data-test="post" edit={edit} disText={contentStatus} iconColor={liked}>
         <div className="addEdit">
           <ion-icon
             name="trash-outline"
@@ -223,28 +236,15 @@ export default function EachPost({ prop }) {
 
           <Tooltip
             id={`likes-tooltip${prop.id}`}
-            style={{
-              borderRadius: "3px",
-              background: "rgba(255, 255, 255, 0.90)",
-              color: "black",
-            }}
+            style={{ borderRadius: '3px', background: 'rgba(255, 255, 255, 0.90)', color: 'black', zIndex: 10 }}
             place="bottom"
           >
-            {likes == 0 ? (
-              <h3>este post não tem likes</h3>
-            ) : likes == 1 ? (
-              <h3>curtido por {likesUsers[0]?.username}</h3>
-            ) : (
-              <h3>
-                {likesUsers[0]?.username}, {likesUsers[1]?.username} e outras{" "}
-                {likes - 2} pessoas{" "}
-              </h3>
-            )}
+            {likes === 0 ? <h3>este post não tem likes</h3> : likes === 1 ? <h3>curtido por {likesUsers[0]?.username}</h3> : <h3>{likesUsers[0]?.username}, {likesUsers[1]?.username} e outras {likes - 2} pessoas </h3>}
           </Tooltip>
         </div>
 
         <div className="contentPost">
-          <p data-test="username">{prop.username}</p>
+          <p data-test="username" onClick={()=>navigate(`/user/${prop.idUser}`)}>{prop.username}</p>
 
           <input
             data-test="edit-input"
@@ -452,6 +452,7 @@ const TimelineList = styled.li`
     }
 
     p {
+      cursor: pointer;
       color: white;
       font-family: Lato;
       font-size: 17px;
@@ -496,8 +497,9 @@ const TimelineList = styled.li`
       cursor: pointer;
       width: 17px;
       height: 15px;
-      color: white;
+      color: ${(props) => (props.iconColor ? "#AC0000" : "white")};
       margin-top: 10px;
+      margin-bottom: -35px;
       z-index: 2;
     }
   }

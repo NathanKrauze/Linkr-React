@@ -8,6 +8,7 @@ import AuthProvider from "./contexts/authContext.jsx";
 import { AuthContext } from "./contexts/authContext.jsx";
 import { PostContext } from "./contexts/postContext.jsx";
 import { useContext, useState } from "react";
+import UserPage from "./pages/UserPage.jsx";
 
 export default function App() {
   const [statusModal, setStatusModal] = useState(false);
@@ -25,6 +26,7 @@ export default function App() {
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/timeline" element={<TimelinePage />} />
             <Route path="/hashtag/:hashtag" element={<HashtagPage />} />
+            <Route path="/user/:id" element={<UserPage/>}/>
           </Routes>
         </PostContext.Provider>
       </AuthProvider>
