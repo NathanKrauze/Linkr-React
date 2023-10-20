@@ -5,9 +5,14 @@ import styled from "styled-components";
 
 export default function Trending({ posts }) {
   const [hashtagsTrending, setTrending] = useState([]);
+  const user = localStorage.getItem("user")
+  const myObj = JSON.parse(user)
+
 
   useEffect(() => {
-    const promise = axios.get(`${process.env.REACT_APP_API_URL}/trending`);
+    const promise = axios.get(`${process.env.REACT_APP_API_URL}/trending`, {headers:{
+      Authorization: `Bearer ${myObj.token}` 
+            }});
 
     promise.then((res) => {
       setTrending(res.data);

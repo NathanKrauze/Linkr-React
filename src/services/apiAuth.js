@@ -39,6 +39,11 @@ function getUsersLikes(id, token){
     return promise
 }
 
-const apiAuth = {getTimeline, postPublish, deletePost, likePost, updatePost, getUsersLikes};
+function getUser(id, token){
+    const promise = axios.get(`${process.env.REACT_APP_API_URL}/users/${id}`, getConfig(token));
+    return promise;
+}
+
+const apiAuth = {getTimeline, postPublish, deletePost, likePost, updatePost, getUsersLikes, getUser};
 
 export default apiAuth
