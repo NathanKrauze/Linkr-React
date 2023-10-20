@@ -200,7 +200,7 @@ export default function EachPost({ prop }) {
   };
 
   return (
-    <>
+    <ContainerPage>
       <TimelineList data-test="post" edit={edit} disText={contentStatus} iconColor={liked}>
         <div className="addEdit">
           <ion-icon
