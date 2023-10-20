@@ -40,16 +40,7 @@ export default function EachPost({ prop }) {
           setLikes(likes - 1)
         }
       })
-      .catch((err) => {
-        if (err.code === "ERR_NETWORK") {
-          alert(
-            "An error occured while trying to fetch the posts, please refresh the page"
-          );
-        } else {
-          console.log(err)
-          navigate("/");
-        }
-      })
+      .catch(err=>alert(err.response.data))
   }
 
   function searchLikes() {
@@ -68,7 +59,7 @@ export default function EachPost({ prop }) {
       setUrlMetaData(() => ({ title, description, image: images[0] }));
     } catch ({
       response: {
-        status,
+        status: {status},
         statusText,
         data: { message },
       },

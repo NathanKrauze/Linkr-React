@@ -372,6 +372,9 @@ const TimelineContainer = styled.div`
   display: flex;
   justify-content: space-around;
   align-items: flex-start;
+  @media (max-width: 670px){
+    margin-top: 30px;
+  }
 `;
 
 const Container = styled.div`

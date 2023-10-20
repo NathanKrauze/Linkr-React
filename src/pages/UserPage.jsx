@@ -7,58 +7,58 @@ import styled from "styled-components";
 import Trending from "../components/Trending";
 
 export default function UserPage() {
-    const user = localStorage.getItem("user");
-    const myObj = JSON.parse(user);
-    const [userContent, setUserContent] = useState([]);
+  const user = localStorage.getItem("user");
+  const myObj = JSON.parse(user);
+  const [userContent, setUserContent] = useState([]);
 
-    const { id } = useParams();
-    const navigate = useNavigate();
+  const { id } = useParams();
+  const navigate = useNavigate();
 
-    useEffect(() => {
-        apiAuth.getUser(id, myObj.token)
-            .then(res => setUserContent(res.data))
-            .catch((err) => {
-                if (err.code === "ERR_NETWORK") {
-                    alert(
-                        "An error occured while trying to fetch the posts, please refresh the page"
-                    );
-                } else {
-                    console.log(err)
-                    navigate("/");
-                }
-            })
-    }, [])
+  useEffect(() => {
+    apiAuth.getUser(id, myObj.token)
+      .then(res => setUserContent(res.data))
+      .catch((err) => {
+        if (err.code === "ERR_NETWORK") {
+          alert(
+            "An error occured while trying to fetch the posts, please refresh the page"
+          );
+        } else {
+          console.log(err)
+          navigate("/");
+        }
+      })
+  }, [id])
 
-    return (
-        <Container>
-            <Header />
-            <TimelineContainer>
-                <Timeline>
-                    <HeaderTime>
-                        <img src={userContent[0]?.pictureUrl} alt='userProfile' />
-                        <h1>{userContent[0]?.username}'s posts</h1>
-                    </HeaderTime>
+  return (
+    <Container>
+      <Header />
+      <TimelineContainer>
+        <Timeline>
+          <HeaderTime>
+            <img src={userContent[0]?.pictureUrl} alt='userProfile' />
+            <h1>{userContent[0]?.username}'s posts</h1>
+          </HeaderTime>
 
 
-                    {userContent.length > 0 ? (
-                        <PostsRender>
-                            {userContent.map((post) => (
-                                <EachPost key={post.id} prop={post} />
-                            ))}
-                        </PostsRender>
-                    ) : userContent.length === 0 ? (
-                        <p className="anyOnePost" data-test="message">
-                            There are no posts yet
-                        </p>
-                    ) : (
-                        <></>
-                    )}
-                </Timeline>
-                <Trending posts={userContent} />
+          {userContent.length > 0 ? (
+            <PostsRender>
+              {userContent.map((post) => (
+                <EachPost key={post.id} prop={post} />
+              ))}
+            </PostsRender>
+          ) : userContent.length === 0 ? (
+            <p className="anyOnePost" data-test="message">
+              There are no posts yet
+            </p>
+          ) : (
+            <></>
+          )}
+        </Timeline>
+        <Trending posts={userContent} />
 
-            </TimelineContainer>
-        </Container>
-    )
+      </TimelineContainer>
+    </Container>
+  )
 }
 
 const PostsRender = styled.ul`
@@ -80,6 +80,10 @@ const TimelineContainer = styled.div`
   display: flex;
   justify-content: space-around;
   align-items: flex-start;
+  @media (max-width: 670px){
+    margin-top: 30px;
+  }
+
 `;
 
 const Timeline = styled.div`
