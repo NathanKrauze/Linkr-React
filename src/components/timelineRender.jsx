@@ -5,7 +5,7 @@ import apiAuth from "../services/apiAuth.js";
 import axios from "axios";
 import { Tooltip } from "react-tooltip";
 import { PostContext } from "../contexts/postContext.jsx";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function EachPost({ prop }) {
   const user = localStorage.getItem("user")
@@ -25,6 +25,8 @@ export default function EachPost({ prop }) {
     image: undefined,
   });
 
+  const navigate = useNavigate();
+
   ReactModal.setAppElement('#root')
 
   function curtirPost(e) {
@@ -38,8 +40,15 @@ export default function EachPost({ prop }) {
           setLikes(likes - 1)
         }
       })
-      .catch(err => {
-        alert(err.response.data)
+      .catch((err) => {
+        if (err.code === "ERR_NETWORK") {
+          alert(
+            "An error occured while trying to fetch the posts, please refresh the page"
+          );
+        } else {
+          console.log(err)
+          navigate("/");
+        }
       })
   }
 
@@ -142,7 +151,7 @@ export default function EachPost({ prop }) {
 
   return (
     <>
-      <TimelineList data-test="post" edit={edit} disText={contentStatus}>
+      <TimelineList data-test="post" edit={edit} disText={contentStatus} iconColor={liked}>
         <div className="addEdit">
           <ion-icon
             name="trash-outline"
@@ -156,7 +165,7 @@ export default function EachPost({ prop }) {
           ></ion-icon>
         </div>
         <div className="sideBarPost">
-          <Image data={prop.pictureUrl}></Image>
+          <Image data={prop.pictureUrl} ></Image>
           <ion-icon name={liked ? 'heart' : 'heart-outline'} data-test='like-btn' onClick={curtirPost}></ion-icon>
           <a data-tooltip-id={`likes-tooltip${prop.id}`} className="tooltipLink" onMouseOver={searchLikes}>
             <p data-test='counter'>{likes} likes</p>
@@ -171,7 +180,7 @@ export default function EachPost({ prop }) {
         </div>
 
         <div className="contentPost">
-          <p data-test="username">{prop.username}</p>
+          <p data-test="username" onClick={()=>navigate(`/user/${prop.idUser}`)}>{prop.username}</p>
 
           <input
             data-test="edit-input"
@@ -340,6 +349,7 @@ const TimelineList = styled.li`
 
 
     p {
+      cursor: pointer;
       color: white;
       font-family: Lato;
       font-size: 17px;
@@ -385,8 +395,9 @@ const TimelineList = styled.li`
       cursor: pointer;
       width: 17px;
       height: 15px;
-      color: white;
+      color: ${(props) => (props.iconColor ? "#AC0000" : "white")};
       margin-top: 10px;
+      margin-bottom: -35px;
       z-index: 2;
     }
   }
