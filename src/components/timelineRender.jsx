@@ -114,7 +114,9 @@ export default function EachPost({ prop }) {
       setContentStatus(true);
       apiAuth
         .updatePost(myObj.token, prop.id, body)
-        .then((res) => {})
+        .then((res) => {
+          setCount(0)
+        })
         .catch((err) => {
           alert(err.response.data);
           setContentStatus(false);
@@ -161,10 +163,10 @@ export default function EachPost({ prop }) {
           </a>
           <Tooltip
             id={`likes-tooltip${prop.id}`}
-            style={{ borderRadius: '3px', background: 'rgba(255, 255, 255, 0.90)', color: 'black' }}
+            style={{ borderRadius: '3px', background: 'rgba(255, 255, 255, 0.90)', color: 'black', zIndex: 10 }}
             place="bottom"
           >
-            {likes == 0 ? <h3>este post não tem likes</h3> : likes == 1 ? <h3>curtido por {likesUsers[0]?.username}</h3> : <h3>{likesUsers[0]?.username}, {likesUsers[1]?.username} e outras {likes - 2} pessoas </h3>}
+            {likes === 0 ? <h3>este post não tem likes</h3> : likes === 1 ? <h3>curtido por {likesUsers[0]?.username}</h3> : <h3>{likesUsers[0]?.username}, {likesUsers[1]?.username} e outras {likes - 2} pessoas </h3>}
           </Tooltip>
         </div>
 
