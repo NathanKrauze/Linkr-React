@@ -17,7 +17,7 @@ export default function Header() {
       <h1>linkr</h1>
       <ContainerRight>
         <div onClick={toggleModal}>
-          <div className="imgPerfil"></div>
+          <div data-test="avatar" className="imgPerfil"></div>
           <div className="arrow">
             {modalOpen ? (
               <FiChevronDown size={26} color="white" />
@@ -27,8 +27,11 @@ export default function Header() {
           </div>
         </div>
 
-        <ModalLogout modalOpen={modalOpen} onClick={() => logout()}>
-          Logout
+        <ModalLogout data-test="menu" modalOpen={modalOpen}>
+          <p data-test="logout" onClick={() => logout()}>
+            {" "}
+            Logout{" "}
+          </p>
         </ModalLogout>
       </ContainerRight>
     </StyledHeader>
