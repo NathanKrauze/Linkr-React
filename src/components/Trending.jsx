@@ -45,7 +45,7 @@ export default function Trending({ posts }) {
 const StyledTrending = styled.div`
   background-color: #171717;
   margin-left: 30px;
-  margin-top: 14%;
+  margin-top: 11.8%;
   @media (min-width: 1200px) {
     display: flex;
   }

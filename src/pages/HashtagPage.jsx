@@ -6,6 +6,7 @@ import MeuComponente from "../components/modalComponent.jsx";
 import Header from "../components/Header.jsx";
 import { PostContext } from "../contexts/postContext.jsx";
 import axios from "axios";
+import Trending from "../components/Trending.jsx";
 
 export default function HashtagPage() {
   const navigate = useNavigate();
@@ -42,34 +43,38 @@ export default function HashtagPage() {
   }, [statusModal]);
 
   return (
-    <Container>
+    <PageContainer>
       <MeuComponente />
 
       <Header />
 
-      <Timeline>
-        <HeaderTime>
-          <h1 data-test="hashtag-title"># {hashtag}</h1>
-        </HeaderTime>
+      <TimelineContainer>
+        <Timeline>
+          <HashtagTitle>
+            <h1 data-test="hashtag-title"># {hashtag}</h1>
+          </HashtagTitle>
 
-        <Loading aux={disable}>
-          <div className="spinner is-animating"></div>
-          <p>Loading...</p>
-        </Loading>
-        {postsHashtag ? (
-          <PostsRender>
-            {postsHashtag.map((post) => (
-              <EachPost key={post.id} prop={post} />
-            ))}
-          </PostsRender>
-        ) : (
-          <p className="anyOnePost" data-test="message">
-            {" "}
-            There are no posts yet
-          </p>
-        )}
-      </Timeline>
-    </Container>
+          <Loading aux={disable}>
+            <div className="spinner is-animating"></div>
+            <p>Loading...</p>
+          </Loading>
+          {postsHashtag ? (
+            <PostsRender>
+              {postsHashtag.map((post) => (
+                <EachPost key={post.id} prop={post} />
+              ))}
+            </PostsRender>
+          ) : (
+            <p className="anyOnePost" data-test="message">
+              {" "}
+              There are no posts yet
+            </p>
+          )}
+        </Timeline>
+
+        <Trending />
+      </TimelineContainer>
+    </PageContainer>
   );
 }
 
@@ -105,7 +110,7 @@ const Loading = styled.div`
 
 const PostsRender = styled.ul`
   width: 100%;
-  margin-top: 10px;
+  margin-top: 0px;
 `;
 
 const Timeline = styled.div`
@@ -130,17 +135,17 @@ const Timeline = styled.div`
   }
 `;
 
-const HeaderTime = styled.div`
+const HashtagTitle = styled.div`
   h1 {
     font-size: 4vh;
     color: #ffffff;
     margin-left: 10px;
     margin-top: 20px;
-    margin-bottom: 20px;
+    margin-bottom: 2px;
   }
 `;
 
-const Container = styled.div`
+const PageContainer = styled.div`
   display: flex;
   width: 100%;
   flex-direction: column;
@@ -148,4 +153,8 @@ const Container = styled.div`
   align-items: center;
   background-color: #333333;
   height: 100%;
+`;
+
+const TimelineContainer = styled.div`
+  display: flex;
 `;
