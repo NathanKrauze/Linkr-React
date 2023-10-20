@@ -19,7 +19,7 @@ export default function EachPost({ prop, functionP }) {
   const [likes, setLikes] = useState(Number.parseInt(prop.likes))
   const [contentStatus, setContentStatus] = useState(true)
   const [postContent, setPostContent] = useState(prop.postText)  
-  const { setStatusModal, setIdPost, setReRenderTimeline } =
+  const { setStatusModal, setIdPost } =
     useContext(PostContext);
   const inputRef = useRef(null);
   const [count, setCount] = useState(0);
@@ -32,9 +32,7 @@ export default function EachPost({ prop, functionP }) {
     description: "",
     image: undefined,
   });
-  const [metadataC, setMetaC] = useState(0)
-
-
+  
   const navigate = useNavigate();
 
   ReactModal.setAppElement('#root')
@@ -64,22 +62,17 @@ export default function EachPost({ prop, functionP }) {
   }
 
   const fetchMetaData = async () => {
-    console.log(metadataC)
-    setMetaC(metadataC +1)
-
-    if(metadataC===1){
+       
       console.log({request: prop.postUrl})
     try {
       const {
         data: { title, description, images },
-      } = await axios.get(`https://jsonlink.io/api/extract?url=${prop.postUrl}`);
-      setMetaC(0)
-      
+      } = await axios.get(`https://jsonlink.io/api/extract?url=${prop.postUrl}`);     
       setUrlMetaData(() => ({ title, description, image: images[0] }));
     } catch {
       console.log("error metadata")
     } 
-  }};
+  };
 
   useEffect(() => {
     if (myObj.idUser === prop.idUser) {
@@ -194,7 +187,7 @@ export default function EachPost({ prop, functionP }) {
   return (
 
     <ContainerPage>
-      <TimelineList data-test="post" edit={edit} disText={contentStatus} iconColor={liked}>
+      <TimelineList data-test="post" edit={edit} distext={contentStatus.toString()} iconColor={liked}>
         <div className="addEdit">
           <ion-icon
             name="trash-outline"
@@ -218,6 +211,7 @@ export default function EachPost({ prop, functionP }) {
             data-tooltip-id={`likes-tooltip${prop.id}`}
             className="tooltipLink"
             onMouseOver={searchLikes}
+            href="likes"
           >
             <p data-test="counter">{likes} likes</p>
           </a>
@@ -418,12 +412,12 @@ const TimelineList = styled.li`
     padding: 10px;
     box-sizing: border-box;
     width: 611px;
-    @media (max-width: 661px) {
+    @media (min-width: 661px) {
       width: 100%;
     }
     .postText {
       display: ${(props) => (props.distext === "true" ? "none" : "inline")};
-      width: auto;
+      width: 100%;
       font-family: lato;
       font-size: 15px;
       color: #b7b7b7;
